@@ -2,7 +2,7 @@
 
 - [说明](README.md)
 - [前言](praface.md)
-- [Servering（服务）](serving.md)
+- [Serving（服务）](serving.md)
 - [Build（构建）](build.md)
 - [Eventing（事件）](eventing.md)
 - [Knative 安装](installing-knative.md)
