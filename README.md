@@ -10,6 +10,10 @@
 
 [Knative](https://github.com/knative) 是一个基于 Kubernetes 的，用于构建、部署和管理现代 serverless 应用的平台。
 
+## 贡献
+
+参与本书翻译请参阅[规范](CODE_OF_CONDUCT.md)。
+
 ## 版权
 
 **[ServiceMesher 社区](http://www.servicemesher.com)出于学习和技术交流的目的将本书翻译成中文版，如有侵权将立即删除。**
