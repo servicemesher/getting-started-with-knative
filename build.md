@@ -1,7 +1,7 @@
 ---
 owner: [haiker2011]
 reviewer: []
-description: "本章是全书的第三章，介绍 Build (构建)的内容等。"
+description: "本章是全书的第三章，主要介绍 Build (构建)的内容。"
 publishDate: 2019-03-04
 updateDate:
 ---
