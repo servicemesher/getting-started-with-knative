@@ -1,7 +1,7 @@
 # 目录
 
 - [说明](README.md)
-- [前言](praface.md)
+- [前言](preface.md)
 - [Knative 概述](knative-overview.md)
 - [Serving（服务）](serving.md)
 - [Build（构建）](build.md)
