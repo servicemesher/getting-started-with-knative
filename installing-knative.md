@@ -87,7 +87,7 @@ kubectl apply -f https://raw.githubusercontent.com/knative/build-templates/maste
 
 > ### 需知
 > 
->如果你计划使用 Build 模块将源代码打包到镜像中，你需要一个容器注册表来推送。在安装 Knative 的同时，考虑设置对所选容器注册表的访问。容器注册表你可以选择 Docker Hub 或谷歌容器注册表这样的公共托管方式，或者你也可以设置自己的私有注册表。有关访问和将映像推送到注册表的更多信息，请参阅第4章中的 Build 组件。
+>如果你计划使用 Build 模块将源代码打包到镜像中，你需要一个容器仓库来推送。在安装 Knative 的同时，考虑设置对所选容器仓库的访问。容器仓库你可以选择 Docker Hub 或谷歌容器仓库这样的公共托管方式，或者你也可以设置自己的私有仓库。有关访问和将映像推送到仓库的更多信息，请参阅第4章中的 Build 组件。
 
 您可以使用 kubectl get buildtemplates 命令验证 Build 模板是否已成功安装。这将返回 default 命名空间中安装的所有构建模板的列表：
 
