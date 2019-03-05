@@ -1,9 +1,9 @@
 ---
 owner: [haiker2011]
-reviewer: []
+reviewer: [SataQiu]
 description: "本章是全书的第三章，主要介绍 Build (构建)的内容。"
 publishDate: 2019-03-04
-updateDate:
+updateDate: 2019-03-05
 ---
 
 # Build（构建）
@@ -12,8 +12,7 @@ Knative 的 Serving（服务）组件是如何从容器到 URL 的，而 Build�
 
 * Builds
 
-> 驱动构建过程的自定义 Kubernetes 资源。
-在定义构建时，您将定义如何获取源代码以及如何创建将运行源代码的容器镜像。
+> 驱动构建过程的自定义 Kubernetes 资源。在定义构建时，您将定义如何获取源代码以及如何创建将运行源代码的容器镜像。
 
 * Build Templates
 
@@ -27,9 +26,9 @@ Knative 的 Serving（服务）组件是如何从容器到 URL 的，而 Build�
 
 ## Service Accounts（服务账户）
 
-在开始配置构建之前，我们首先面临一个紧迫的问题：如何在构建时获得需要验证的服务？如何从私有的 Git 仓库拉取代码和如何把容器镜像推到 Docker Hub 里面？为此，我们可以利用两个 kubernet 原生组件的组合：Secrets 和 Service Accounts（服务帐户）。Secrets 允许我们安全地存储这些经过身份验证的请求所需的凭据，Service Accounts（服务帐户）允许我们灵活地为多个构建提供和维护凭据，而无需每次构建新应用程序时手动配置它们。
+在开始配置构建之前，我们首先面临一个紧迫的问题：如何在构建时获得需要验证的服务？如何从私有的 Git 仓库拉取代码和如何把容器镜像推到 Docker Hub 里面？为此，我们可以利用两个 Kubernetes 原生组件的组合：Secrets 和 Service Accounts（服务帐户）。Secrets 允许我们安全地存储这些经过身份验证的请求所需的凭据，Service Accounts（服务帐户）允许我们灵活地为多个构建提供和维护凭据，而无需每次构建新应用程序时手动配置它们。
 
-在 [Example 3-1](#example-3-1) 中，我们首先创建一个 Secret，命名为 `dockerhub-account`，里面包含我们需要的凭据。当然，我们可以像应用其他 YAML 一样应用它，如 [Example 3-2](#example-3-2) 所示。
+在 [Example 3-1](#example-3-1) 中，我们首先创建一个 Secret ，命名为 `dockerhub-account`，里面包含我们需要的凭据。当然，我们可以像应用其他 YAML 一样应用它，如 [Example 3-2](#example-3-2) 所示。
 
 <span id="example-3-1">*Example 3-1. knative-build-demo/secret.yaml*</span>
 
@@ -54,9 +53,9 @@ data:
 kubectl apply -f knative-build-demo/secret.yaml
 ```
 
-首先要注意的是，`username` 和 `password` 在传递给 Kubernetes 时都是 base64 编码的。我们还注意到，我们使用 `basic-auth` 根据 Docker Hub 进行身份验证，这意味着我们将使用用户名和密码进行身份验证，而不是类似于 access token（访问令牌）的东西。此外，Knative 还附带了开箱即用的 `ssh-auth`，这允许我们使用SSH私钥如果我们想从私有 Git 存储库中拉取代码。
+首先要注意的是，`username` 和 `password` 在传递给 Kubernetes 时都是 base64 编码的。我们还注意到，我们使用 `basic-auth` 根据 Docker Hub 进行身份验证，这意味着我们将使用用户名和密码进行身份验证，而不是类似于 access token（访问令牌）的东西。此外，Knative 还附带了开箱即用的 `ssh-auth`，这允许我们使用 SSH 私钥如果我们想从私有 Git 存储库中拉取代码。
 
-除了将 Secret 命名为 `dockerhub-account` 之外，我们还对 Secret 进行了注释。Annotations（注释）是说明连接到特定主机时使用哪些凭据的一种方式。在 [Example 3-3](#example-3-3) 中，我们定义了连接到 Docker Hub 时使用的基于身份的验证凭证集。
+除了将 Secret 命名为 `dockerhub-account` 之外，我们还对 Secret 进行了注解。Annotations（注解）是说明连接到特定主机时使用哪些凭据的一种方式。在 [Example 3-3](#example-3-3) 中，我们定义了连接到 Docker Hub 时使用的基于身份的验证凭证集。
 
 **我的凭据安全吗？**
 > 使用 base64 编码对凭证进行编码不是为了安全性，而是为了可靠地将这些字符串传输到其中 Kubernetes 。在后端，Kubernetes 提供了关于如何加密机密的更多选项。有关加密的详细资料 Secret，请参考 [Kubernetes文档](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/) 。
@@ -74,11 +73,11 @@ secrets:
 - name: dockerhub-account
 ```
 
-在这里，我们创建了一个名为 `build-bot` 的 ServiceAccount（服务账户），允许它访问`dockerhub-account` Secret。在我们的例子中当推送容器镜像时，Knative 使用这些凭证对 Docker Hub 进行身份验证。
+在这里，我们创建了一个名为 `build-bot` 的 ServiceAccount（服务账户），允许它访问 `dockerhub-account` Secret 。在我们的例子中当推送容器镜像时，Knative 使用这些凭证对 Docker Hub 进行身份验证。
 
-## The Build Resource
+## The Build Resource（构建资源）
 
-让我们从 Hello World 应用程序开始。这是一个简单的 Go 应用程序，它监听端口8080并以“Hello from Knative!”作为 HTTP GET 请求的回应。它的全部代码如 [Example 3-4](#example-3-4) 所示。
+让我们从 Hello World 应用程序开始。这是一个简单的 Go 应用程序，它监听端口8080并以 “Hello from Knative!” 作为 HTTP GET 请求的回应。它的全部代码如 [Example 3-4](#example-3-4) 所示。
 
 <span id="example-3-4">*Example 3-4. knative-helloworld/app.go*</span>
 
@@ -159,7 +158,7 @@ Git 仓库，可以选择使用参数来定义分支、标记或提交 SHA 。
 * 自定义
 任意容器镜像仓库。这允许用户编写自己的源代码，只要将源代码放在 `/work space` 目录中即可。
 
-我们只需要安装一个额外的组件，即 Build Template（构建模板）。我们将在“Build templates”一节中更深入地介绍这些内容，但是现在，我们将继续安装我们在YAML中定义的那个，在本例中是 Kaniko Build Template（构建模板）如 [Example 3-7](#example-3-7) 所示。
+我们只需要安装一个额外的组件，即 Build Template（构建模板）。我们将在 “Build templates” 一节中更深入地介绍这些内容，但是现在，我们将继续安装我们在 YAML 中定义的那个，在本例中是 Kaniko Build Template（构建模板）如 [Example 3-7](#example-3-7) 所示。
 
 <span id="example-3-7">*Example 3-7. Install the Kaniko Build Template*</span>
 
@@ -168,7 +167,7 @@ kubectl apply -f https://
 raw.githubusercontent.com/knative/build-templates/master/kaniko/kaniko.yaml
 ```
 
-通过应用模板，我们可以像在Serving（服务）示例中那样部署服务配置如 [Example 3-8](#example-3-8) 所示。
+通过应用模板，我们可以像在 Serving（服务）示例中那样部署服务配置如 [Example 3-8](#example-3-8) 所示。
 
 <span id="example-3-8">Example 3-8. Deploy our application*</span>
 
@@ -180,12 +179,12 @@ kubectl apply -f knative-build-demo/service.yaml
 
 1. 从 [gswk/knative-helloworld](https://github.com/gswk/knative-helloworld) 的 GitHub repo 中拉取代码。
 2. 在 repo 中使用 Kaniko Build Template（构建模板）(下一节将详细描述)。
-3. 使用我们前面设置的“build-bot” Service Account（服务帐户）将容器推送到 [gswk/knative-build-demo](https://hub.docker.com/r/gswk/knative-build-demo) 上的 Docker Hub。
+3. 使用我们前面设置的 “build-bot” Service Account（服务帐户）将容器推送到 [gswk/knative-build-demo](https://hub.docker.com/r/gswk/knative-build-demo) 上的 Docker Hub。
 4. 使用新构建的容器部署应用程序。
 
 ## Build Templates（构建模板）
 
-在 [Example 3-6](#example-3-6) 中，我们使用了一个 Build Template（构建模板），但从未真正解释过 Build Template（构建模板）是什么或它做什么。简单来说，Build Template（构建模板）是可共享的、封装的、参数化的构建步骤集合。目前，Knative已经支持多个 Build Template（构建模板），包括：
+在 [Example 3-6](#example-3-6) 中，我们使用了一个 Build Template（构建模板），但从未真正解释过 Build Template（构建模板）是什么或它做什么。简单来说，Build Template（构建模板）是可共享的、封装的、参数化的构建步骤集合。目前，Knative 已经支持多个 Build Template（构建模板），包括：
 
 * Kaniko
 
