@@ -1,6 +1,6 @@
 ---
-owner: [haiker2011]
-reviewer: [SataQiu]
+owner: ["haiker2011"]
+reviewer: ["SataQiu", "shaobai"]
 description: "本章是全书的第三章，主要介绍 Build (构建)的内容。"
 publishDate: 2019-03-04
 updateDate: 2019-03-05
@@ -8,7 +8,7 @@ updateDate: 2019-03-05
 
 # Build（构建）
 
-Knative 的 Serving（服务）组件是如何从容器到 URL 的，而 Build（构建）组件是如何从源代码到容器的。Build resource 允许您定义如何编译代码和构建容器，而不是指向预构建的容器镜像。这确保了在将代码发送到您选择的容器镜像库之前以一致的方式编译和打包代码。有一些新的组件，我们将在本章介绍：
+Knative 的 Serving（服务）组件是如何从容器到 URL 的，而 Build（构建）组件是如何从源代码到容器的。Build resource 允许您定义如何编译代码和构建容器，而不是指向预构建的容器镜像。这确保了在将代码发送到您选择的容器镜像库之前以一致的方式编译和打包代码。我们将在本章中介绍一些新的组件：
 
 * Builds
 
