@@ -8,9 +8,9 @@ updateDate:
 
 # Eventing（事件）
 
-到目前为止，我们在 Knative 上使用函数的一种非常有效的方法仅是通过向应用程序发送基本的 HTTP 请求。然而，无服务器的松散耦合特性同时也适用于事件驱动架构。也就是说，也许我们想当文件被上传到 FTP 服务器时调用这个函数，又或者，我们在做销售时需要调用一个函数来处理付款和更新库存的操作。可以在某些我们关注的事件发生时让Knative 处理并告诉我们，而不是让应用程序和函数担心看这些逻辑事件。
+到目前为止，我们在 Knative 上使用函数的一种非常有效的方法仅是通过向应用程序发送基本的 HTTP 请求。然而，无服务器的松散耦合特性同时也适用于事件驱动架构。也就是说，也许我们想当文件被上传到 FTP 服务器时调用这个函数，又或者，我们在做销售时需要调用一个函数来处理付款和更新库存的操作。与其让我们的应用程序或函数考虑侦听事件的逻辑，不如让 Knative 处理并告诉我们当我们关注的事件发生时。
 
-自己做这件事会有很多工作要做并要编写实现特定功能的代码。幸运的是，Knative 提供了一个抽象层使消费事件变得更容易。Knative 简单提供一个“事件”，而不需要你写特定的代码来选择消息代理。当它发生时应用程序根本不需要关心它来自哪里或发到哪去，就这么简单。为实现这一目标，Knative 引入了三个新的概念：源、通道和订阅。
+自己做这件事会有很多工作要做并要编写实现特定功能的代码。幸运的是，Knative 提供了一个抽象层使消费事件变得更容易。Knative 简单提供一个“事件”，而不需要你写特定的代码来选择消息代理。当它发生时应用程序根本不需要关心它来自哪里或发到哪去，就这么简单。为实现这一目标，Knative 引入了三个新的概念：Source(源)、Channels(通道)和 Subscriptions(订阅)。
 
 ## Source (源)
 
@@ -30,14 +30,14 @@ updateDate:
 
 - Container Source （容器源）
 
-  如果你需要创建自己的事件源，Knative 还有一个抽象---容器源。这允许你轻松创建自定义的事件源，并打包为容器。请参见第48页的“构建自定义事件源”。
+  如果你需要创建自己的事件源，Knative 还有一个抽象---容器源。这允许你轻松创建自定义的事件源，并打包为容器。请参见[第六章](using-knative.md)的“构建自定义事件源”。
 
 
 虽然这只是当前事件源的子集，但清单在不断的快速增长。你可以在 Knative Eventing 文档中的 Knative 生态系统中查看事件源的当前列表。 
 
 我们来看一个使用 Kubernetes 事件源的简单案例并将结果输出到标准输出。我们将部署一个函数在端口 8080 上侦听 POST 请求并将它们打印出来，如例 4-1 所示。
 
-例4-1 `knative-eventhing-demo/app.go`
+例4-1: `knative-eventhing-demo/app.go`
 ```go
 package main
 
@@ -93,7 +93,7 @@ $ curl $SERVICE_IP -H "Host: knative-eventing-demo.default.example.com" -XPOST -
 
 接下来，我们可以设置 Kubernetes 事件源。在配置和身份验证方面，不同的事件源会有不同的要求。例如，GCP PubSub 源则要求向 GCP 进行身份请求验证。对于 Kubernetes 事件源，我们需要创建一个服务帐户，该帐户有权读取到 Kubernetes 集群内发生的事件。就像在第3章中所做的那样，我们在 YAML 中定义了这个服务帐户并将其应用到我们的集群,如例 4-3 所示。
 
-例 4-3 `knative-eventing-demo/serviceaccount.yaml`
+例4-3: `knative-eventing-demo/serviceaccount.yaml`
 ```yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -137,7 +137,7 @@ $ kubectl apply -f knative-eventing-demo/serviceaccount.yaml
 
 随着我们的“events-sa”服务帐户创建好后，剩下的就是定义我们的实际源，在我们的案例中是一个 Kubernetes 事件源实例。事件源的实例将会以特定的配置运行，在这个例子中是预定义的服务帐户。可以看到我们的配置如示例 4-4 中所示。
 
-例 4-4 ` knative-eventing-demo/source.yaml`
+例4-4: ` knative-eventing-demo/source.yaml`
 
 ```yaml
 apiVersion: sources.eventing.knative.dev/v1alpha1
@@ -155,16 +155,16 @@ spec:
 
 其中大部分都相当简单。我们将创建的对象类型定义为 *KubernetesEventSource*，给它命名为 *k8sevents*，并传递一些特定于实例的配置，例如我们应该运行的命名空间和我们应该使用的服务帐户。你可能已经注意到了一个新的东西，即接收器配置。
 
-接收器是一种定义我们想要将事件发送到的地方和 Kubernetes 对象参考的一种方式，或者更简单地说，就是一种在 Kubernetes 中寻址到另一个预定义对象的方法。在 Knative 中使用事件源时，这通常是一个服务（如果我们想要将事件直接发送到在 Knative 上运行的应用程序），或者是一个尚未引入的组件 --- 通道。
+接收器是一种定义我们想要将事件发送到的地方和 Kubernetes 对象参考的一种方式，或者更简单地说，就是一种在 Kubernetes 中寻址到另一个预定义对象的方法。在 Knative 中使用事件源时，这通常是一个服务(如果我们想要将事件直接发送到在 Knative 上运行的应用程序)，或者是一个尚未引入的组件 --- Channels(通道)。
 
 ## Channels （通道）
 
-现在我们已经为我们的事件定义了一个源，我们需要一个地方发送它们。虽然你可以将事件直接发送到服务，这也就意味着你可以自己处理重试的逻辑和队列。当一个事件发送到你的服务并且它恰好关闭时会发生什么？如果要将相同的事件发送到多个服务，又该怎么办？为了回答这些问题，Knative 介绍了 Channels (通道)的概念。
+现在我们已经为我们的事件定义了一个源，我们需要一个地方发送它们。虽然你可以将事件直接发送到服务，这也就意味着你可以自己处理重试的逻辑和队列。当一个事件发送到你的服务并且它恰好关闭时会发生什么？如果要将相同的事件发送到多个服务，又该怎么办？为了回答这些问题，Knative 介绍了 Channels(通道)的概念。
 
 
-通道处理缓冲和持久性，有助于确保将事件传递到其预期的服务，即使该服务已被关闭。另外，Channels 是我们代码和底层消息传递解决方案之间的抽象。这意味着我们可以像在  Kafka 和 RabbitMQ 之间进行交换，但在这两种情况下我们都不需要编写特定的实现代码。继续我们的演示案例，我们将设置一个用于发送所有事件的通道，如例 4-5 所示。你会注意到此通道与我们在示例 4-4 中的事件源中定义的接收器相匹配。
+通道处理缓冲和持久性，有助于确保将事件传递到其预期的服务，即使该服务已被关闭。另外，Channels 是我们代码和底层消息传递解决方案之间的抽象。这意味着我们可以像在  [Kafka](http://kafka.apache.org/) 和 [RabbitMQ](http://www.rabbitmq.com/) 之间进行交换，但在这两种情况下我们都不需要编写特定的实现代码。继续我们的演示案例，我们将设置一个用于发送所有事件的通道，如例 4-5 所示。你会注意到此通道与我们在示例 4-4 中的事件源中定义的接收器相匹配。
 
-例 4-5 `knative-eventing-demo/channel.yaml`
+例4-5: `knative-eventing-demo/channel.yaml`
 ```yaml
 apiVersion: eventing.knative.dev/v1alpha1
 kind: Channel
@@ -191,11 +191,11 @@ $ kubectl apply -f knative-eventing-demo/channel.yaml
 
   仅使用 Google PubSub 托管服务来传递信息但需要访问 GCP 帐户权限。
 
-- Kafka (分布式发布订阅消息系统)
+- [Kafka](http://kafka.apache.org/) (分布式发布订阅消息系统)
 
   将事件发送到正在运行的 Apache Kafka 集群，这是一个开源的集群分布式流媒体平台，具有出色的消息队列功能。
 
-- NATS (一个高性能的开源消息系统)
+- [NATS](https://www.nats.io/) (一个高性能的开源消息系统)
   
   将事件发送到正在运行的 NATS 集群，这是一个高性能的开源消息系统，可以以各种模式和配置传递和使用消息。
 
@@ -210,7 +210,7 @@ $ kubectl apply -f knative-eventing-demo/channel.yaml
 
 Knative 中的服务不了解或不关心事件和请求是如何获取的。它可以是来自入口网关的 HTTP 请求，也可以是从通道发送来的事件。无论何种方式，我们的服务仅接收 HTTP 请求。这是 Knative 中一个重要的解耦，它确保我们将代码编写到我们的架构中，而不是在我们的基础架构中。让我们创建订阅，它将从我们的通道向我们的服务发送事件。正如示例 4-6 所示，该定义仅使用了两个引用，一个引用 Channel，另一个引用 Service。
 
-例4-6. ` knative-eventing-demo/subscription.yaml`
+例4-6: ` knative-eventing-demo/subscription.yaml`
 
 ```yaml
 apiVersion: eventing.knative.dev/v1alpha1
@@ -231,7 +231,7 @@ spec:
 
 到此，我们现在就拥有了所有可以为我们通过应用事件的管道。Kubernetes 记录集群中发生的事件，我们的事件源会将其发送到我们的通道并随后发送到我们的服务，这要归功于我们定义的订阅功能。如果我们查看服务中的日志，我们会立即看到这些事件，如例 4-7 所示。
 
-例4-7. 从服务中检查日志
+例4-7: 从服务中检查日志
 ```bash
 $ kubectl get pods -l app=knative-eventing-demo-00001 -o name pod/knative-eventing-demo-00001-deployment-764c8ccdf8-8w782
 
@@ -243,4 +243,4 @@ $ kubectl logs knative-eventing-demo-00001-deployment-f4c794667-mcrcv -c user-co
 
 ## Conclusion (结论)
 
-这些构建块为帮助实现丰富、强大的事件驱动架构铺平了道路，但这仅仅是个开始。我们将在第48页的“构建自定义事件源”中使用 *ContainerSource* 创建自定义源。我们还将在第7章中展示 Eventing。
+这些构建块为帮助实现丰富、强大的事件驱动架构铺平了道路，但这仅仅是个开始。我们将在[第六章](using-knative.md)的“构建自定义事件源”中使用 *ContainerSource* 创建自定义源。我们还将在[第7章](putting-it-all-together.md)中展示 Eventing。
