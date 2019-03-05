@@ -16,7 +16,7 @@ updateDate:
 
 > ### 为什么我们需要安装 Istio
 >
-> 迄今为止，我们还没讨论过 Istio，但是它做为安装的一部分出现了。 Istio 是什么？Knative 为什么需要它？
+> 迄今为止，我们还没讨论过 Istio，但是它作为安装的一部分出现了。Istio 是什么？Knative 为什么需要它？
 >
 > Istio 是一个服务网络。它在 Kubernetes 之上提供了很多特性，包括流量管理、网络策略执行和可观察性。我们不认为 Istio 是 Knative 的组件，而是它的依赖项之一，就像 Kubernetes 一样。所以 Knative 最终使用 Istio 运行在 Kubernetes 集群之上。
 >
@@ -87,7 +87,7 @@ kubectl apply -f https://raw.githubusercontent.com/knative/build-templates/maste
 
 > ### 需知
 > 
->如果你计划使用 Build 模块将源代码打包到镜像中，你需要一个容器仓库来推送。在安装 Knative 的同时，考虑设置对所选容器仓库的访问。容器仓库你可以选择 Docker Hub 或谷歌容器仓库这样的公共托管方式，或者你也可以设置自己的私有仓库。有关访问和将映像推送到仓库的更多信息，请参阅第4章中的 Build 组件。
+>如果你计划使用 Build 模块将源代码打包到镜像中，你需要一个容器仓库来推送。在安装 Knative 的同时，考虑设置对所选容器仓库的访问。容器仓库你可以选择 Docker Hub 或谷歌容器仓库这样的公共托管方式，或者你也可以设置自己的私有仓库。有关访问和将镜像推送到仓库的更多信息，请参阅第4章中的 Build 组件。
 
 您可以使用 kubectl get buildtemplates 命令验证 Build 模板是否已成功安装。这将返回 default 命名空间中安装的所有构建模板的列表：
 
