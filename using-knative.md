@@ -1,47 +1,46 @@
 ---
 owner: [loverto]
 reviewer: []
-description: "本章讲述了使用knative的高级用例"
+description: "本章讲述了使用 knative 的高级用例"
 publishDate: 
 updateDate:
 ---
 
 # 使用 Knative
 
-通过前面的章节已经扎实掌握Knative的组成组件了，现在是时候开始研究一些更高级的主题了。Serving为如何路由流量提供了相当大的灵活性，还有其他的构建模板使构建应用程序变得容易。只需几行代码即可轻松制作我们自己的事件源。在本章中，我们将深入研究这些功能，以了解如何使我们在Knative上运行代码变得更加容易。
+通过前面的章节已经扎实掌握 Knative 的组成组件了，现在是时候开始研究一些更高级的主题了。Serving 为如何路由流量提供了相当大的灵活性，还有其他的构建模板使构建应用程序变得容易。只需几行代码即可轻松制作我们自己的事件源。在本章中，我们将深入研究这些功能，以了解如何使我们在 Knative 上运行代码变得更加容易。
 
-## 创建和运行Knative Services
+## 创建和运行 Knative Services
 
-[第2章介绍](/serving.md) 了Knative Service的概念。
+[第 2 章介绍](/serving.md) 了 Knative Service 的概念。
 
-回想一下Knative中的Service是单个配置和路径集合的组合。在Knative和Kubernetes封面下，最终是Pod中的0个或更多容器以及使应用程序可寻址的组件。所有这些都由具有强大流量策略选项的路由层支持。
+回想一下，Knative 中的 Service 是单个配置和路由集合的组合。在 Knative 和 Kubernetes 体系内，它最终是 Pod 中的 0 个或更多容器以及其他使您的应用程序可寻址的组件。所有这些都由具有强大流量策略选项的路由层支持。
 
-无论您将工作负载视为应用程序，容器还是流程，它都将在Knative中作为服务运行。这为处理许多场景提供了灵活性，具体取决于构成软件的资产。本节提供了Knative为您构建和部署软件提供的另一种选择。
+无论您将工作负载视为应用程序，容器还是流程，它都将在 Knative 中作为服务运行。这为处理许多场景提供了灵活性，具体取决于构成软件的资产。本节提供了 Knative 为您构建和部署软件提供的另一种选择。
 
-### 使用Cloud Foundry Buildpack构建模板
+### 使用 Cloud Foundry Buildpack 构建模板
 
-您在[第3章中](/build.md) 看到，Kaniko构建模板允许您使用Dockerfile构建容器图像。此方法要求您负责编写和维护Dockerfile。如果您希望完全消除容器管理的负担，您可能希望使用不同的构建模板。Buildpack构建模板负责基础镜像，并引入构建和运行应用程序所需的所有依赖项。
+您在[第 3 章中](/build.md) 看到，Kaniko 构建模板允许您使用 Dockerfile 构建容器镜像。此方法要求您负责编写和维护 Dockerfile。如果您希望完全消除容器管理的负担，您可能希望使用不同的构建模板。Buildpack 构建模板负责基础镜像，并引入构建和运行应用程序所需的所有依赖项。
 
-Cloud Foundry是一种开源平台即服务（PaaS），它利用buildpack来简化开发和运营。在Cloud Foundry中，buildpacks将检查您的源代码，以自动确定要下载的运行时和依赖项，构建代码以及运行应用程序。例如，使用Ruby应用程序，buildpack将下载Ruby运行时并 在Gemfile上运行 `bundle  install` 以下载所有必需的依赖项。Java buildpack将为您的应用程序下载JVM和任何所需的依赖项。通过使用Buildpack Build Template，Knative中也提供了这个模型。
+Cloud Foundry 是一种开源平台即服务（PaaS），它利用 buildpack 来简化开发和运营。在 Cloud Foundry 中，buildpacks 将检查您的源代码，以自动确定要下载的运行时和依赖项，构建代码以及运行应用程序。例如，使用 Ruby 应用程序，buildpack 将下载 Ruby 运行时并在 Gemfile 上运行 `bundle  install` 以下载所有必需的依赖项。Java buildpack 将为您的应用程序下载 JVM 和任何所需的依赖项。通过使用 Buildpack Build Template，这个模型在 Knative 中也可用。
 
-与Kaniko Build Template一样，您必须将Buildpack Build Template CRD应用到环境：
+与 Kaniko Build Template 一样，您必须将 Buildpack Build Template CRD 应用到环境：
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/knative/build-templates/master/buildpack/buildpack.yaml
 ```
 
+Knative Services 仅依赖于 Serving 组件。Build 模块不需要在 Knative 中部署和运行 Service。那你为什么要在你的服务中嵌入 Build 呢？你怎么知道在特定情况下这是一个好主意？
 
-Knative Services仅依赖于Serving组件。Build模块不需要在Knative中部署和运行Service。那你为什么要在你的服务中嵌入Build呢？你怎么知道在特定情况下这是一个好主意？
+考虑您的软件开发生命周期过程非常重要。您是否有一个现有的，成熟的构建管道来生成容器镜像并将它们推送到 registry 仓库？如果是这样，您可能不需要 Knative Build 为您完成工作。如果没有，在 Knative Service 中定义 Build 方法可能会使事情变得更容易。
 
-考虑您的软件开发生命周期过程非常重要。您是否有一个现有的，成熟的构建管道来生成容器镜像并将它们推送到registry仓库？如果是这样，您可能不需要Knative Build为您完成工作。如果没有，在Knative Service中定义Build方法可能会使事情变得更容易。
+使用哪个构建模板还需要依据您希望如何打包代码和依赖项而定。对于使用既定流程管理 Dockerfile 的 Docker 重度使用者而言，Kaniko 是一个很好的选择。Cloud Foundry 用户或开发者们
 
-决定使用哪个构建模板还需要检查您希望如何打包代码和依赖项。对于Docker的大量用户以及管理Dockerfiles的既定流程，Kaniko是一个很好的选择。Cloud Foundry或开发的用户 
+如果只喜欢编写代码并且不太关心基础设施的人会选择 Buildpack Build Template。经验丰富的 Java 用户可能已经熟悉使用 Jib 来构建 Java 容器，这使得它成为正确的选择。无论您的过程如何，Knative 都会提供一些不错的抽象，同时允许您选择最适合您的方法。
 
-如果只喜欢编写代码并且不太关心基础设施的人会选择Buildpack Build Template。经验丰富的Java用户可能已经熟悉Jib来构建Java容器，这使得它成为正确的选择。无论您的过程如何，Knative都会提供一些不错的抽象，同时允许您选择最适合您的方法。
+在 Knative 中，Buildpack 构建模板将使用 Cloud Foundry 的相同构建包，包括自动检测要应用于代码的构建包。如果您参考 [例6\-1](#p51)
 
-在Knative中，Buildpack构建模板将使用Cloud Foundry的相同构建包，包括自动检测要应用于代码的构建包。如果您参考 [例6\-1](#p51)
-
-你会看到很像Kaniko Buildpack，你只能定义代码的位置以及推送容器图像的位置。最大的区别是没必要提供Dockerfile。
+你会看到很像 Kaniko Buildpack，你只能定义代码的位置以及推送容器镜像的位置。最大的区别是没必要提供 Dockerfile。
 
 相反，构建模板知道如何为此应用程序构建容器。
 
@@ -73,41 +72,41 @@ spec:
             image: docker.io/gswk/knative-buildpack-demo:latest 
 ```
 
-除了代码和容器注册表的路径之外，唯一的
+除了代码和容器注册表的路由之外，唯一的
 
-[与示例3\-6中的Kaniko构建的不同之处 ](#p31) 在于模板的名称已从kaniko更改为buildpack。在此 创建和运行Knative Services中
+[与示例3\-6中的 Kaniko 构建的不同之处 ](#p31) 在于模板的名称已从 kaniko 更改为 buildpack。在此 创建和运行 Knative Services 中
 
 ![指数52_1.png](https://ws1.sinaimg.cn/large/61411417ly1g0pw1ph83cj20sg0sg4co.jpg)
 
-例如，git存储库是Node.js应用程序hello.js，以及定义应用程序的依赖关系和元数据的package.json文件。在这种情况下，Build Template将下载Node运行时和npm可执行文件，运行`npm install`，最后构建容器并将其推送到Docker Hub。
+例如，git 存储库是 Node.js 应用程序 hello.js，以及定义应用程序的依赖关系和元数据的 package.json 文件。在这种情况下，Build Template 将下载 Node 运行时和 npm 可执行文件，运行`npm install`，最后构建容器并将其推送到 Docker Hub。
 
-获得所有的Knative对象
+获得所有的 Knative 对象
 
-您可能发现已应用了大量YAML文件，并且不确定是否已创建所有的Knative对象。有一个命令方便你确认这些问题，命令如下所示：
+您可能发现已应用了大量 YAML 文件，并且不确定是否已创建所有的 Knative 对象。有一个命令方便你确认这些问题，命令如下所示：
 
 ```bash
 kubectl get knative -n {NAMESPACE} 
 ```
 
-返回给定命名空间中所有的Knative对象列表。
+返回给定命名空间中所有的 Knative 对象列表。
 
 ```bash
 kubectl get knative --all-namespaces
 ```
 
-返回群集上存在的所有Knative对象。
+返回群集上存在的所有 Knative 对象。
 
 ## 部署注意事项
 
-Knative还提供不同的部署方法，具体取决于最适合您服务的方案。我们在[第2章显示](/serving.md)  一个Knative路线如何可以用来将流量发送到特定的修订。以下部分将详细介绍Knative Routes如何实现蓝绿部署和增量部署。
+Knative 还提供不同的部署方法，具体取决于最适合您服务的方案。我们在[第 2 章显示](/serving.md)一个 Knative 路线如何可以用来将流量发送到特定的修订。以下部分将详细介绍 Knative Routes 如何实现蓝绿部署和增量部署。
 
 ### 零停机时间部署
 
-[在第2章中](/serving.md)，您了解了如何将单个路由指向多个修订版以及如何实现零停机部署。由于修订是不可变的，并且可以同时运行多个版本，因此可以在为旧版本提供流量时调出新版本。然后，一旦准备好将流量引导到新版本，请更新路由以立即切换。这有时被称为蓝绿色部署，蓝色和绿色代表不同的版本。
+[在第 2 章中](/serving.md)，您了解了如何将单个路由指向多个修订版以及如何实现零停机部署。由于修订是不可变的，并且可以同时运行多个版本，因此可以在为旧版本提供流量时调出新版本。然后，一旦准备好将流量引导到新版本，请更新路由以立即切换。这有时被称为蓝绿色部署，蓝色和绿色代表不同的版本。
 
-[例6\-2](#p52) 重新审视了 [ 第2章中](/serving.md) 的Route定义。
+[例6\-2](#p52) 重新审视了 [ 第 2 章中](/serving.md) 的 Route 定义。
 
-例6\-2。所有流量都将路由到00001修订版
+例6\-2。所有流量都将路由到 00001 修订版
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -122,10 +121,10 @@ spec:
     percent: 100
 ```
 
-如[第2章所述](/serving.md)，您可以在`knative-helloworld.default.example.com`和 `v1.knative-helloworld.default.example.com` 上访问修订版 `knative-routing-demo-00001`。让我们考虑一个场景，你已经在代码中添加了一些新功能或修复了一些错误，然后构建并将其推送到Knative。这导致一个名为`knative-routing-demo-00002`的新版本。
+如[第 2 章所述](/serving.md)，您可以在`knative-helloworld.default.example.com`和 `v1.knative-helloworld.default.example.com` 上访问修订版 `knative-routing-demo-00001`。让我们考虑一个场景，你已经在代码中添加了一些新功能或修复了一些错误，然后构建并将其推送到 Knative。这导致一个名为`knative-routing-demo-00002`的新版本。
 
 但是，在开始向应用程序发送实时流量之前，我们希望确保它正常运行。
-[在例6\-3](#p53)中有一个名为v2 的新路由，但没有路由到它的实时流量。
+[在例6\-3](#p53)中有一个名为 v2 的新路由，但没有路由到它的实时流量。
 
 例6\-3。我们的新版本 
 
@@ -145,7 +144,7 @@ spec:
     percent: 0
 ```
 
-这些修订版已命名为 v1和v2（尽管您可以选择任何名称，例如蓝色和绿色）。这意味着您可以在`v2.knative-helloworld.default`访问新版本。example.com路线仍然只会将流量发送到00001修订版。在更改流量之前，请访问新版本并对其进行测试以确保它已准备好用于生产流量。当新版本准备好接收实时流量时，请再次更新路由，如 [例6\-4所示](#p54)。
+这些修订版已命名为 v1和 v2（尽管您可以选择任何名称，例如蓝色和绿色）。这意味着您可以在`v2.knative-helloworld.default`访问新版本。example.com 路线仍然只会将流量发送到 00001 修订版。在更改流量之前，请访问新版本并对其进行测试以确保它已准备好用于生产流量。当新版本准备好接收实时流量时，请再次更新路由，如 [例6\-4所示](#p54)。
 
  例6\-4。将所有实时流量发送到我们的新版本
 
@@ -162,17 +161,17 @@ spec:
     percent: 100
 ```
 
-应用后，新的配置流量将立即开始路由到00002版本而不会出现任何停机。发现代码中的新错误并需要回滚？再次更新Route配置以指向原始版本同样容易。因为修订版是不可变的，而Knative会存储过去的版本yaml配置，您可以随时路由它们。这包括对特定容器镜像、配置以及与修订版相关的任何构建信息的引用。
+应用后，新的配置流量将立即开始路由到 00002 版本而不会出现任何停机。发现代码中的新错误并需要回滚？再次更新 Route 配置以指向原始版本同样容易。因为修订版是不可变的，而 Knative 会存储过去的版本 yaml 配置，您可以随时路由它们。这包括对特定容器镜像、配置以及与修订版相关的任何构建信息的引用。
 
 ### 增量部署
 
-Knative Routes支持的另一种部署模式是逐步部署新版本的代码。这可以用于AB测试，或者在为每个用户释放功能之前将功能推广到用户子集。在Knative中，这是通过使用基于百分比的路由来实现的。
+Knative Routes 支持的另一种部署模式是逐步部署新版本的代码。这可以用于 AB 测试，或者在为每个用户释放功能之前将功能推广到用户子集。在 Knative 中，这是通过使用基于百分比的路由来实现的。
 
 虽然类似于蓝绿色部署示例
 
 [6\-4，你可以在例6\-5中看到](#p54) 而不是路由0％
 
-对于v2的流量，我们在v1和v2上均匀分配负载。您也可以选择使用`80-20`之类的其他拆分，甚至可以拆分三个修订版。每个修订版仍可通过指定的子域访问，但用户流量将按百分比值进行拆分。
+对于 v2的流量，我们在 v1和 v2上均匀分配负载。您也可以选择使用`80-20`之类的其他拆分，甚至可以拆分三个修订版。每个修订版仍可通过指定的子域访问，但用户流量将按百分比值进行拆分。
 
 例6\-5。部分负载路由
 
@@ -196,9 +195,9 @@ spec:
 
 到目前为止所涵盖的每个示例都使用了通用示例域。
 
-这不是用于生产应用程序的URL。不仅如此，还不可能路由到 example.com。值得庆幸的是，Knative提供了使用自定义域的选项。开箱即用，Knative为每个Route使用{route}.{namespace}.{domain}方案，并为 example.com 使用默认域。
+这不是用于生产应用程序的 URL。不仅如此，还不可能路由到 example.com。值得庆幸的是，Knative 提供了使用自定义域的选项。开箱即用，Knative 为每个 Route 使用{route}.{namespace}.{domain}方案，并为 example.com 使用默认域。
 
-使用`knative-custom-domain`示例作为[示例6\-6中](#p55) 显示的起始位置，默认情况下它接收  `knative-custom-domain.default.example.com` 的Route。
+使用`knative-custom-domain`示例作为[示例6\-6中](#p55) 显示的起始位置，默认情况下它接收  `knative-custom-domain.default.example.com` 的 Route。
 
 例6\-6。 `knative-custom-domain/configuration.yaml`
 
@@ -235,7 +234,7 @@ spec:
     percent: 100
 ```
 
-正如预期的那样，这将创建一个服务并在`knative-custom-domain.default.example.com`上创建一个Route。现在来看看如何将默认URL方案中的域名从 example.com 更改为您实际可以路由到的域名。此示例使用本书的网站 `dev.gswkbook.com` 的子域。这可以通过更新配置域ConfigMap轻松完成，该配置域由Knative 的默认配置[，如例6\-8所示](#p56)。
+正如预期的那样，这将创建一个服务并在`knative-custom-domain.default.example.com`上创建一个 Route。现在来看看如何将默认 URL 方案中的域名从 example.com 更改为您实际可以路由到的域名。此示例使用本书的网站 `dev.gswkbook.com` 的子域。这可以通过更新配置域 ConfigMap 轻松完成，该配置域由 Knative 的默认配置[，如例6\-8所示](#p56)。
 
 例6\-8。`knative-custom-domain/domain.yaml`
 
@@ -249,7 +248,7 @@ data:
   dev.gswkbook.com: ""
 ```
 
-Knative最终应该协调对域的更改。重新创建Route将加快进程：
+Knative 最终应该协调对域的更改。重新创建 Route 将加快进程：
 
 ```bash
 $ kubectl delete -f route.yaml
@@ -259,7 +258,7 @@ $ kubectl apply -f route.yaml
 
 看一下更改后的路线，您会看到它现在已获得`knative-custom-domain.default.dev` 的更新网址。
 
-`gswkbook.com`。如果您的入口网关可公开访问（即，在Google的GKE或类似的托管Kubernetes产品上设置），您可以为 `*.dev.gswkbook.com` 创建一个通配符DNS条目， 以便路由到您的Knative安装并访问您的服务和功能直接通过互联网，如 [例6\-9](#p57) 所示。
+`gswkbook.com`。如果您的入口网关可公开访问（即，在 Google 的 GKE 或类似的托管 Kubernetes 产品上设置），您可以为 `*.dev.gswkbook.com` 创建一个通配符 DNS 条目， 以便路由到您的 Knative 安装并访问您的服务和功能直接通过互联网，如 [例6\-9](#p57) 所示。
 
 ```bash
 $ kubectl get route knative-custom-domain -o yaml
@@ -278,7 +277,7 @@ status:
     revisionName: knative-custom-domain-00001
 ```
 
-您可能还希望为不同的部署设置不同的域。例如，默认情况下，您可能希望将所有内容部署到开发域，然后在测试后将其转发到生产域。Knative提供了一种简单的启用此功能的机制，允许您定义多个域并标记路由以确定它们所在的域。让我们再次更新`config-domain` ConfigMap，设置另一个用于生产的域名 `*.prod.gswkbook.com`，如图所示
+您可能还希望为不同的部署设置不同的域。例如，默认情况下，您可能希望将所有内容部署到开发域，然后在测试后将其转发到生产域。Knative 提供了一种简单的启用此功能的机制，允许您定义多个域并标记路由以确定它们所在的域。让我们再次更新`config-domain` ConfigMap，设置另一个用于生产的域名 `*.prod.gswkbook.com`，如图所示
 
 [例6\-10。](#p57)
 
@@ -297,7 +296,7 @@ data:
   dev.gswkbook.com: ""
 ```
 
-[在例6\-11中](#p58)，我们已经定义了具有标签environment ：prod的任何Route将被放置在 `prod.gswkbook.com`  域上，否则它将  默认 放置在 `dev.gswkbook.com` 域中。您需要做的就是将应用程序移动到这个新域，然后在配置的元数据部分中使用这个新标签更新您的Route。
+[在例6\-11中](#p58)，我们已经定义了具有标签 environment ：prod 的任何 Route 将被放置在 `prod.gswkbook.com`  域上，否则它将  默认 放置在 `dev.gswkbook.com` 域中。您需要做的就是将应用程序移动到这个新域，然后在配置的元数据部分中使用这个新标签更新您的 Route。
 
  例6\-11。`knative-custom-domain/route-label.yaml`
  
@@ -316,7 +315,7 @@ spec:
     percent: 100
 ```
 
-应用后，您的路由会自动更新，并且假设您的DNS配置正确，可以立即在新域中访问。您可以通过在检索Route CRD时确保域条目匹配来验证这一点，[如例6\-12所示](#p58)。
+应用后，您的路由会自动更新，并且假设您的 DNS 配置正确，可以立即在新域中访问。您可以通过在检索 Route CRD 时确保域条目匹配来验证这一点，[如例6\-12所示](#p58)。
 
 ```bash
 kubectl describe route knative-custom-domain
@@ -342,17 +341,17 @@ Status:
 
 ## 构建自定义事件源
 
-假设我们希望我们的应用程序从我们没有事件源的源接收事件。例如，我们可能希望定期检查文件服务器是否有新文件，或者请求URL来监视更改。将这些代码组合在一起很容易，但是运行它的最佳方法是什么？像其他Knative应用程序一样运行它是没有意义的，因为它需要永久运行，但是如果我们在Knative之外运行它，那么我们就可以了。
+假设我们希望我们的应用程序从我们没有事件源的源接收事件。例如，我们可能希望定期检查文件服务器是否有新文件，或者请求 URL 来监视更改。将这些代码组合在一起很容易，但是运行它的最佳方法是什么？像其他 Knative 应用程序一样运行它是没有意义的，因为它需要永久运行，但是如果我们在 Knative 之外运行它，那么我们就可以了。
 
 会有我们需要手动管理和配置的新组件。
 
-Knative通过使用ContainerSource事件源轻松创建自己的事件源来解决这个问题。使用此事件源，我们提供Knative容器，Knative将为容器提供POST事件的URL。只要满足几个要求，我们就可以用我们喜欢的任何语言编写事件源：
+Knative 通过使用 ContainerSource 事件源轻松创建自己的事件源来解决这个问题。使用此事件源，我们提供 Knative 容器，Knative 将为容器提供 POST 事件的 URL。只要满足几个要求，我们就可以用我们喜欢的任何语言编写事件源：
 
-它可以打包成一个容器，并有一个ENTRYPOINT
+它可以打包成一个容器，并有一个 ENTRYPOINT
 
 定义所以它知道如何运行我们的代码。
 
-2.它希望接收一个`--sink` CLI标志，Knative将提供一个指向已配置目标的URL。
+2.它希望接收一个`--sink` CLI 标志，Knative 将提供一个指向已配置目标的 URL。
 
 让我们看看它是如何工作的，通过构建一个事件源，它将在给定[的时间间隔内](http://bit.ly/2SSpX80) 发出当前时间 [，称为时间事件 \-](http://bit.ly/2SSpX80)
 
@@ -366,13 +365,13 @@ Knative通过使用ContainerSource事件源轻松创建自己的事件源来解�
 require 'optparse'
 require 'net/http'
 require 'uri'
-# 默认CLI选项（如果省略）
+# 默认 CLI 选项（如果省略）
 options = {
   :sink => "http://localhost:8080",
   :interval => 1
 }
 
-# 解析CLI标志
+# 解析 CLI 标志
 opt_parser = OptionParser.new do |opt|
   opt.on("-s", "--sink SINK", "Location to send events") 
     do |sink| options[:sink] = sink
@@ -394,9 +393,9 @@ loop do
 end
 ```
 
-解析CLI标志后，这个Ruby应用程序进入一个无限循环，不断地将当前时间POST到由。提供的URL
+解析 CLI 标志后，这个 Ruby 应用程序进入一个无限循环，不断地将当前时间 POST 到由。提供的 URL
 
-`--sink`标志，然后休眠`--interval`标志提供的秒数。由于这需要打包为容器，我们还有一个用于构建它的Dockerfile，如图所示
+`--sink`标志，然后休眠`--interval`标志提供的秒数。由于这需要打包为容器，我们还有一个用于构建它的 Dockerfile，如图所示
 
 [例6\-14。](#p60)
 
@@ -409,11 +408,11 @@ WORKDIR /time-event-source
 ENTRYPOINT ["ruby", "app.rb"]
 ```
 
-这里并不奇怪。我们使用官方Ruby图像作为基础，添加我们的代码，并定义如何运行我们的代码。我们可以构建我们的容器并将其发送到Docker Hub。在我们运行事件源之前，我们需要一个发送事件的地方。我们已经开始构建一个非常简单的Knative应用程序，它记录了所有HTTP POST的主体
+这里并不奇怪。我们使用官方 Ruby 镜像作为基础，添加我们的代码，并定义如何运行我们的代码。我们可以构建我们的容器并将其发送到 Docker Hub。在我们运行事件源之前，我们需要一个发送事件的地方。我们已经开始构建一个非常简单的 Knative 应用程序，它记录了所有 HTTP POST 的主体
 
-要求它收到。我们将应用所示的YAML
+要求它收到。我们将应用所示的 YAML
 
-[在例6\-15](#p60)  中部署它，命名为logger。
+[在例6\-15](#p60)  中部署它，命名为 logger。
 
 例6\-15。`time-event-source/service.yaml`
 
@@ -437,7 +436,7 @@ spec:
 kubectl apply -f service.yaml
 ```
 
-剩下的就是让我们的事件源在Knative中运行。YAML与其他事件源的概述相同，
+剩下的就是让我们的事件源在 Knative 中运行。YAML 与其他事件源的概述相同，
 
 [我们在例6\-16中可以看到。](#p61)
 
@@ -460,11 +459,11 @@ spec:
     name: logger
 ```
 
-这里有几点需要注意。首先，我们在image参数中为Knative提供了Event Source容器的位置，就像我们部署Service时一样。其次，我们在args数组中提供了`--interval`标志，但我们省略了`--sink`标志。这是因为Knative将查看我们提供的接收器（在本例中为我们的记录器服务），查找URL
+这里有几点需要注意。首先，我们在 image 参数中为 Knative 提供了 Event Source 容器的位置，就像我们部署 Service 时一样。其次，我们在 args 数组中提供了`--interval`标志，但我们省略了`--sink`标志。这是因为 Knative 将查看我们提供的接收器（在本例中为我们的记录器服务），查找 URL
 
 到该资源，并自动将其提供给我们的事件源。
 
-这意味着，在Event Source容器的内部，最后我们的代码将使用类似于以下内容的命令调用：
+这意味着，在 Event Source 容器的内部，最后我们的代码将使用类似于以下内容的命令调用：
 
 ```bash
 ruby app.rb
@@ -472,13 +471,13 @@ ruby app.rb
 --sink=http://logger.default.example.com
 ```
 
-我们将使用我们期望的通常的kubectl apply命令来部署它：
+我们将使用我们期望的通常的 kubectl apply 命令来部署它：
 
 ```bash
 kubectl apply -f source.yaml
 ```
 
-很快，我们会看到一个新的Pod旋转，但重要的区别在于它将永久运行而不是从下降到零。我们可以查看记录器 服务 中的日志，以验证我们的事件是否[符合预期，如例6\-17所示](#p62)。
+很快，我们会看到一个新的 Pod 旋转，但重要的区别在于它将永久运行而不是从下降到零。我们可以查看记录器 服务 中的日志，以验证我们的事件是否[符合预期，如例6\-17所示](#p62)。
 
 例6\-17。从我们的记录器中检索日志服务 
 
@@ -495,7 +494,7 @@ $ kubectl logs logger-00001-deployment-57446ffb59-vzg97 -c user-container
 [Wed 26 Dec 2018 21:13:05 UTC] 2018-12-26 21:13:05 +0000
 ```
 
-这种简单的抽象使我们能够快速轻松地提供自己的事件源。不仅如此，而且与构建模板非常相似，您可以设想如何轻松地与Knative社区共享这些事件源，因为它们很容易插入到您的环境中。我们还将在[第七章中](/putting-it-all-together.md) 查看另一个自定义事件源 
+这种简单的抽象使我们能够快速轻松地提供自己的事件源。不仅如此，而且与构建模板非常相似，您可以设想如何轻松地与 Knative 社区共享这些事件源，因为它们很容易插入到您的环境中。我们还将在[第七章中](/putting-it-all-together.md) 查看另一个自定义事件源 
 
 ## 结论
 
