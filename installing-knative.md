@@ -61,7 +61,7 @@ kubectl get pods --namespace knative-build --watch
 
 > ### 小贴士： 轻量安装
 >
-> 如果您正在本地机器上安装 Knative 或刚刚开始安装，您可能希望在不使用内置监控（在monitoring 命名空间下）组件的情况下安装 Knative。在这种情况下，您可以使用以下命令来安装服务：
+> 如果您正在本地机器上安装 Knative 或刚刚开始安装，您可能希望在不使用内置监控（在 monitoring 命名空间下）组件的情况下安装 Knative。在这种情况下，您可以使用以下命令来安装服务：
 > 
 > ```
 > kubectl apply --filename https://storage.googleapis.com/knative-releases/serving/latest/release-no-mon.yaml
