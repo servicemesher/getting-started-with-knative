@@ -1,6 +1,6 @@
 ---
 owner: ["mathlsj"]
-reviewer: ["SataQiu","haiker2011"]
+reviewer: ["SataQiu","haiker2011"，"icyxp"]
 description: "本书第五章节，讲述了 Knative 的安装。"
 publishDate: 2019-03-04
 updateDate: 2019-03-06
@@ -8,7 +8,7 @@ updateDate: 2019-03-06
 
 # Knative 安装
 
-在开始使用 Knative 构建和承载工作负载前，你需要安装它。你还应该运行一些命令去确认它能够正常工作。本章将介绍从 Mac 或 Linux shell 中安装和验证 Knative 所需的步骤。
+在开始使用 Knative 构建和托管工作负载前，你需要安装它。你还应该运行一些命令来验证它是否正常运行并按预期工作。本章将介绍从 Mac 或 Linux shell 安装和验证 Knative 的必要步骤。
 
 ## 建立一个 Knative 集群
 
