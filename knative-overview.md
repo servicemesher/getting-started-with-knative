@@ -1,9 +1,9 @@
 ---
 owner: ["jordanchenCN"]
-reviewer: ["rootsongjc","haiker2011","icyxp"]
+reviewer: ["rootsongjc","haiker2011","icyxp","SataQiu"]
 description: "本章是全书的第一章，主要用来介绍 Knative "
 publishDate: 2019-03-05
-updateDate: 2019-03-05
+updateDate: 2019-03-07
 ---
 
 # Knative 概述
@@ -20,7 +20,7 @@ updateDate: 2019-03-05
 >通过灵活的插件化的构建系统将用户源代码构建成容器。目前已经支持多个构建系统，比如 Google 的 Kaniko，它无需运行 Docker 守护进程就可以在 Kubernetes 集群上构建容器镜像。
 
 *Serving（服务）*
->基于负载进行自动伸缩，包括在没有负载时缩减到零。允许您为多版本应用创建流量策略，从而能够通过 URL 轻松路由到目标应用程序。
+>基于负载进行自动伸缩，包括在没有负载时缩减到零。允许你为多个修订版本（revisions）应用创建流量策略，从而能够通过 URL 轻松路由到目标应用程序。
 
 *Events（事件）*
 >使得生产和消费事件变得容易。抽象出事件源，并允许操作人员使用自己选择的消息传递层。
@@ -43,7 +43,7 @@ Knative 是作为 Kubernetes 的一组自定义资源类型(CRDs)来安装的，
 
 除了关于无服务器架构（serverless）定义的争论之外，下一个逻辑问题是“为什么创造的是 Knative ？”随着基于容器的架构的流行和 Kubernetes 的普及，我们又开始见到一些相同的问题，这些问题之前也出现在平台即服务（PaaS）方案上并推动了其发展。如在构建容器时，我们该如何保证其一致性？谁负责给所有东西打补丁？如何根据需求来伸缩？如何实现零停机部署？
 
-虽然 Kubernetes 确实已经进化并开始解决其中一些问题，但是之前提到的关于不断发展的无服务器架构（serverless）的概念方面产生了更多的问题。How do you recover infrastructure from sources with no traffic to scale them to zero?如何管理多个事件类型的一致性？如何定义事件源和目标？
+虽然 Kubernetes 确实已经进化并开始解决其中一些问题，但是之前提到的关于不断发展的无服务器架构（serverless）的概念方面产生了更多的问题。如何管理多个事件类型的一致性？如何定义事件源和目标？
 
 许多无服务器架构（serverless）或函数即服务（FaaS）框架都尝试回答这些问题，但它们都在用不同的方式来解决问题，且不是所有的解决方案都用到了 Kubernetes。而 Knative 构建在 Kubernetes 的基础上，并为构建和部署无服务器架构（serverless）和基于事件驱动的应用程序提供了一致的标准模式。Knative 减少了这种新的软件开发方法所产生的开销，同时还把路由（routing）和事件（eventing）的复杂性抽象出来。
 
