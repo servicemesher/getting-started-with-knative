@@ -1,18 +1,18 @@
 ---
 owner: ["junahan"]
 reviewer: []
-description: "本章介绍 Knative Serving 模组，描述 Knative Serving 如何部署并为应用和功能 (funtions) 提供服务。"
+description: "本章介绍 Knative Serving 组件，描述 Knative Serving 如何部署并为应用和函数 (funtions) 提供服务。"
 publishDate: 2019-03-03
 updateDate: 2019-03-03 
 ---
 
 # Serving（服务）
 
-即便使用无服务器架构，处理和响应 HTTP 请求的能力依然是重要的概念。在你开始写一些代码并使用事件触发一个功能函数之前，你需要一个地方来运行你的代码。
+即便使用无服务器架构，处理和响应 HTTP 请求的能力依然是重要的概念。在你开始写一些代码并使用事件触发一个函数之前，你需要一个地方来运行你的代码。
 
-本章研究 Knative Serving 组件，你将学习 Knative Serving 管理部署并为应用和功能函数提供服务。Serving 使你很容易部署一个预先构建好的镜像到底层 Kubernetes 集群。(在[第三章： Build](./build.md)，你将看到 Knative Build 可以帮助构建你的镜像以在 Serving 组件中运行该镜像。) Knative Serving 维护某一时刻的快照，提供自动化伸缩功能 (既支持扩容，也支持缩容直至为零)，以及处理必要的路由和网络编排。
+本章研究 Knative Serving 组件，你将学习 Knative Serving 管理部署并为应用和函数提供服务。Serving 使你很容易部署一个预先构建好的镜像到底层 Kubernetes 集群。(在[第三章： Build](./build.md)，你将看到 Knative Build 可以帮助构建你的镜像以在 Serving 组件中运行该镜像。) Knative Serving 维护某一时刻的快照，提供自动化伸缩功能 (既支持扩容，也支持缩容直至为零)，以及处理必要的路由和网络编排。
 
-Serving 模块定义一组特定的对象以控制所有功能：修订版本 (Revision)、配置 (Configuration)、路由 (Route)、和服务 (Service)。Knative 使用 Kubernetes CRDs (自定义资源) 的方式实现这些 Kubernetes 对象。下图 2-1 展示所有 Serving 组件对象模型间的关系。在接下去的章节将具体介绍每个部分。
+Serving 模块定义一组特定的对象以控制所有功能：修订版本 (Revision)、配置 (Configuration)、路由 (Route) 和服务 (Service)。Knative 使用 Kubernetes CRDs (自定义资源) 的方式实现这些 Kubernetes 对象。下图 2-1 展示所有 Serving 组件对象模型间的关系。在接下去的章节将具体介绍每个部分。
 
 <div align="center">
 <img src="images/knative-serving-object-model.jpg" alt="Serving Object Model" />
@@ -22,7 +22,7 @@ Serving 模块定义一组特定的对象以控制所有功能：修订版本 (R
 ## Configuration (配置) 和 Revision (修订版本)
 Knative Serving 始于 Configuration 。Configuration 是你为一个部署定义期望状态的地方。最小化 Configuration 包括一个配置名称和一个要部署容器镜像的引用。在 Knative 中，你定义这个引用为一个 Revision。Revision 代表一个不变的，某一时刻的代码和 Configuration 的快照。每个 Revision 引用一个特定的容器镜像和运行它所需要的任何特定对象 (例如环境变量和卷)。然而，你不必显式创建一个 Revision。由于 Revision 是不变的，它们从不会被改变和删除，作为替代，当你修改 Configuration 的时候，Knative 会创建一个 Revision。这允许一个 Configuration 既反映工作负载的当前状态，于此同时也维护一个它自己的历史 Revision 列表。
 
-以下[示例 2-1](#example-2-1) 展示了一个完整的 Configuration 定义。它指定一个 Revision，该 Revision 使用一个容器注册 URI 引用一个特定的镜像并且指定其版本标签。
+以下[示例 2-1](#example-2-1) 展示了一个完整的 Configuration 定义。它指定一个 Revision，该 Revision 使用一个容器镜像仓库 URI 引用一个特定的镜像并且指定其版本标签。
 
 *<span id="example-2-1">示例 2-1. knative-helloworld/configuration.yml </span>*
 
@@ -112,11 +112,11 @@ status:
   observedGeneration: 1
 ```
 
-注意[示例 2-2](#example-2-2) 中 `status` 小节，Configuration 控制器保持对最近创建和就绪 Revison 的追踪。它也包含了 Revision 的适用条件，表明它是否就绪以接受流量。
+注意[示例 2-2](#example-2-2) 中 `status` 小节，Configuration 控制器保持对最近创建和就绪 Revison 的追踪。它也包含了 Revision 的适用条件，表明它是否就绪以接收流量。
 
 > **NOTE**
 >
-> Configuration 可能指定一个已有的容器镜像，就像例子 2-1 中所示。或者，它也可以选择指向一个 Build 资源以从源代码创建一个容器镜像。[第三章：Build](./build.md) 覆盖 Knative Build 模块的详情并提供一些示例。
+> Configuration 可以指定一个已有的容器镜像，就像例子 2-1 中所示。或者，它也可以选择指向一个 Build 资源以从源代码创建一个容器镜像。[第三章：Build](./build.md) 将介绍 Knative Build 组件的详情并提供一些示例。
 >
 
 那么在 Kubernetes 集群内部发生了什么？我们在 Configuration 中指定的容器镜像是什么样子？Knative 转换 Configuration 定义为一些 Kubernetes 对象并在集群中创建他们。在启用 Configuration 后，有可以看到相应的 Deployment, ReplicaSet, 和 Pod。[示例 2-3](#example-2-3) 展示了所有来自[示例 2-1](#example-2-1) 所创建的对象。
@@ -134,10 +134,10 @@ $ kubectl get pods -oname
 pod/knative-helloworld-00001-deployment-5f7b54c768-lrqt5
 ```
 
-现在我们有了用于运行我们应用的 Pod，但是我们怎么知道该向那里发送请求？这正是 Route 发挥作用的地方。
+现在我们有了用于运行我们应用的 Pod，但是我们怎么知道该向哪里发送请求？这正是 Route 用武之地。
 
 ## Route (路由)
-Knative Route 提供一个路由流量至运行代码的机制。它映射到一个命名的，HTTP 可寻址 (HTTP-addressable) 端点到一个或者多个 Revision。Configuration 本身并不定义 Route。[示例 2-4](#example-2-4) 展示一个最基本的 Route 定义，其发送流量到一个特定 Configuration 的最新 Revision。
+Knative Route 提供一个路由流量至运行代码的机制。它将一个命名的，HTTP 可寻址端点映射到一个或者多个 Revision。Configuration 本身并不定义 Route。[示例 2-4](#example-2-4) 展示一个最基本的 Route 定义，其发送流量到一个特定 Configuration 的最新 Revision。
 
 *<span id="example-2-4">示例 2-4. knative-helloworld/route.yml</span>*
 
@@ -202,7 +202,7 @@ spec:
 >
 > 在这个案例中，子域名中 `default` 部分指的是命名空间。你将在[第六章：部署注意事项](./build.md)一节中学习到如何改变这些值以及如何使用自定义域名。
 
-Knative 也允许以百分比的方式跨 Revision 进行流量分配。这支持诸如增量发布、蓝绿部署、或者其他复杂的路由场景。你将在[第六章](./build.md)看到这些以及其他案例。
+Knative 也允许以百分比的方式跨 Revision 进行流量分配。这支持诸如增量发布、蓝绿部署或者其他复杂的路由场景。你将在[第六章](./build.md)看到这些以及其他案例。
 
 ### Autoscaler (自动伸缩器) 和 Activator (激活器) 
 无服务的一个关键原则是可以按需扩容以满足需要和缩容以节省资源。无服务负载应当可以一直缩容至零。那意味着如果没有进入请求，也就没有容器实例在运行。Knative 使用两个关键组件以实现该功能。它实现了 Autoscaler 和 Activator 作为集群中的 Pods。你可以看到他们伴随其他 Serving 组件一起运行在 `knative-serving` 命名空间中 (参见[示例 2-6](#example-2-6))。
@@ -270,7 +270,7 @@ Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接�
 >
 
 ## 服务
-在 Knative 中，Service 管理负责的整个生命周期。包括部署、路由和回滚。(不要将 Knative Service 和 Kubernetes [Service](https://kubernetes.io/docs/concepts/services-networking/service/) 混淆。他们是不同的资源。) Knative Service 控制一组 组成你的软件的 Routes 和 Configurations。Knative Service 可以被看作是一段代码 —— 你正在部署的应用或者功能函数。
+在 Knative 中，Service 管理负责的整个生命周期。包括部署、路由和回滚。(不要将 Knative Service 和 Kubernetes [Service](https://kubernetes.io/docs/concepts/services-networking/service/) 混淆。他们是不同的资源。) Knative Service 控制一系列组成软件的 Routes 和 Configurations。Knative Service 可以被看作是一段代码 —— 你正在部署的应用或者函数。
 
 一个 Service 注意确保一个应用有一个 Route、一个 Configuation，以及为每次 Service 更新产生的一个新 Revision。当创建一个 Service 时，你没有特别定义一个 Route，Knative 创建一个发送流量到最新 Revision 的路由。你可以选择一个特定的 Revision 以路由流量到该 Revision。
 
@@ -333,7 +333,7 @@ conditions:
 [示例 2-9](#example-2-9) 显示这个命令的输出。
 
 ## 小结
-现在已经向你介绍了 Service、Routes、Configurations 和 Revisions。Revisions 是不变的并且只能经由 Configuration 改变而被创建。你可以分别单独创建 Configuration 和 Routes，或者把他们组合在一起并定义他们为一个 Service。理解 Serving 模组的这些构建块是使用 Knative 的基础。你部署的应用均需要一个 Service 或者 Configuration 以在 Knative 中作为容器运行。
+现在已经向你介绍了 Service、Routes、Configurations 和 Revisions。Revisions 是不变的并且只能经由 Configuration 改变而被创建。你可以分别单独创建 Configuration 和 Routes，或者把他们组合在一起并定义他们为一个 Service。理解 Serving 组件的这些构建块是使用 Knative 的基础。你部署的应用均需要一个 Service 或者 Configuration 以在 Knative 中作为容器运行。
 
-但是，你如何打包你的源代码进入一个容器镜像好以这种方式进行部署？[第三章](./build.md)将回答这些问题并且向你介绍 Knative Build 模组。
+但是，你如何打包你的源代码进入一个容器镜像好以这种方式进行部署？[第三章](./build.md)将回答这些问题并且向你介绍 Knative Build 组件。
 
