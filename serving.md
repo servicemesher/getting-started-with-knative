@@ -1,6 +1,6 @@
 ---
 owner: ["junahan"]
-reviewer: []
+reviewer: ["SataQiu", "haiker2011"]
 description: "本章介绍 Knative Serving 组件，描述 Knative Serving 如何部署并为应用和函数 (funtions) 提供服务。"
 publishDate: 2019-03-03
 updateDate: 2019-03-03 
