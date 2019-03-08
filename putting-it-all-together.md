@@ -12,13 +12,13 @@ updateDate:
 
 ## 架构
 
-在深入研究代码之前，让我们先看看应用程序的体系架构，如图7-1所示。我们在这里构建三个重要的东西:事件源、服务和前端。
+在深入研究代码之前，让我们先看看应用程序的体系架构，如 [图7-1](#pic-7-1)所示。我们在这里构建三个重要的东西:事件源、服务和前端。
 图中 Knative 内部的每一个组件都代表着我们将利用目前所学的知识来构建的内容，包括使用Kaniko构建模板的服务和用于轮询数据的自定义事件源:
 
 *USGS 事件源*
 : 我们将构建一个自定义的 ContainerSource 事件源，它将在给定的时间间隔轮询USGS提供的数据。为预构建的容器映像打包。
 
-![arch](images/arch.png)
+<span id="pic-7-1">![arch](images/arch.png)</span>
 *图 7-1 应用程序的体系结构。来自于 USGS 的地震数据源作为事件进入我们的事件源，这将触发我们的GeoCoder服务来持久化事件。我们的前台也将使用我们的Geocoder服务来查询最近的事件。*
 
 *Geocoder 服务*
@@ -43,9 +43,9 @@ $ helm install
 
 ## Geocoder 服务
 
-如应用程序体系结构图所示，我们的事件源和前端都将向 Geocoder 服务发送请求，后者将与 Postgres 数据库通信。这将我们的服务置于应用程序的中心位置。对我们服务的 HTTP POST 请求将会在数据库中记录事件，而 GET 请求将检索过去24小时内发生的事件。让我们来看一下示例7-1中我们服务的代码。
+如应用程序体系结构图所示，我们的事件源和前端都将向 Geocoder 服务发送请求，后者将与 Postgres 数据库通信。这将我们的服务置于应用程序的中心位置。对我们服务的 HTTP POST 请求将会在数据库中记录事件，而 GET 请求将检索过去24小时内发生的事件。让我们来看一下[示例 7-1](#example-7-1)中我们服务的代码。
 
-*示例 7-1 geocoder/app.rb*
+*<span id="example-7-1">示例 7-1 geocoder/app.rb</span>*
 
 ```ruby
 require 'geocoder'
@@ -125,9 +125,9 @@ def coords_to_address(lat, lon)
 end
 ```
 
-我们将使用 Knative 为我们构建容器映像，将连接到 Postgres 数据库所需的信息传递给它，并运行我们的服务。我们可以在 示例7-2 中看到这是如何设置的。
+我们将使用 Knative 为我们构建容器映像，将连接到 Postgres 数据库所需的信息传递给它，并运行我们的服务。我们可以在 [示例7-2](#example-7-2) 中看到这是如何设置的。
 
-*示例 7-2. earthquake-demo/geocoder-service.yaml*
+*<span id="example-7-2">示例 7-2. earthquake-demo/geocoder-service.yaml</span>*
 
 ```YAML
 apiVersion: serving.knative.dev/v1alpha1
@@ -172,9 +172,9 @@ spec:
 
 我们的事件源将负责在指定的时间间隔内轮询USGS地震活动的数据，解析它，并将其发送到我们定义的接收器。由于我们需要轮询数据，并且没有由USGS将其推送给我们的可能，因此它非常适合使用 ContainerSource 编写自定义事件源。
 
-在设置事件源之前，还需要一个事件发送的通道。虽然我们可以直接将事件从事件源发送到我们的服务，但如果我们希望将来能够将事件发送到另一个服务，这将给我们带来一些灵活性。我们只需要一个简单的通道，我们将在 示例 7-3 中定义它。
+在设置事件源之前，还需要一个事件发送的通道。虽然我们可以直接将事件从事件源发送到我们的服务，但如果我们希望将来能够将事件发送到另一个服务，这将给我们带来一些灵活性。我们只需要一个简单的通道，我们将在 [示例 7-3](#example-7-3) 中定义它。
 
-*示例 7-3. earthquake-demo/channel.yaml*
+*<span id="example-7-3">示例 7-3. earthquake-demo/channel.yaml</span>*
 
 ```YAML
 apiVersion: eventing.knative.dev/v1alpha1
@@ -190,9 +190,9 @@ name: in-memory-channel
 
 `kubectl apply -f earthquake-demo/channel.yaml`
 
-正如我们在第6章中构建自定义事件源一样，我们的这个事件源也是由一个脚本构成，在本例中是一个 Ruby 脚本，它接受两个命令行标志位: --sink 和 --interval。让我们在例7-4中看看这个。
+正如我们在第6章中构建自定义事件源一样，我们的这个事件源也是由一个脚本构成，在本例中是一个 Ruby 脚本，它接受两个命令行标志位: --sink 和 --interval。让我们在 [示例7-4](#example-7-4)中看看这个。
 
-*示例 7-4. usgs-event-source/usgs-event-source.rb*
+*<span id="example-7-4">示例 7-4. usgs-event-source/usgs-event-source.rb</span>*
 
 ```Ruby
 require 'date'
@@ -280,9 +280,9 @@ while true do
 end
 ```
 
-像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理--sink标志位。我们还提供了一个额外的标记--interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为Docker容器并上传到Dockerhub上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 示例 7-5 中所示的我们的事件源的 YAML，并创建订阅，以便将事件从通道发送到 示例 7-6 中所示的服务。
+像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理--sink标志位。我们还提供了一个额外的标记--interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为Docker容器并上传到Dockerhub上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的我们的事件源的 YAML，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
 
-*示例 7-5. earthquake-demo/usgs-event-source.yaml*
+*<span id="example-7-5">示例 7-5. earthquake-demo/usgs-event-source.yaml</span>*
 
 ```YAML
 apiVersion: sources.eventing.knative.dev/v1alpha1
@@ -305,7 +305,7 @@ name: geocoder
 
 一旦我们应用这个YAML，事件源将启动一个持续运行的容器，该容器将轮询事件并将它们发送到我们创建的通道中。另外，我们需要将Geocoder服务连接到通道中。
 
-*示例 7-6. earthquake-demo/subscription.yaml*
+*<span id="example-7-6">示例 7-6. earthquake-demo/subscription.yaml</span>*
 
 ```YAML
 apiVersion: eventing.knative.dev/v1alpha1
@@ -330,9 +330,9 @@ name: geocoder
 
 ## 前端
 
-最后，我们需要把我们收集的所有数据一起放在前端来进行可视化。我们创建了一个简单的网站，并将其打包在一个容器中，该容器将使用 [Nginx](https://hub.docker.com/_/nginx/) 提供服务。当页面加载时，它将调用 Geocoder 服务，返回一个地震事件的数组，包括坐标和震级，并在地图上显示它们。我们还将把它设置为 Knative 服务，这样我们就可以免费获得简易的路由和度量。同样，我们将像其他 Knative 服务一样编写一个 YAML，并使用 Kaniko 构建模板，如示例7-7所示。
+最后，我们需要把我们收集的所有数据一起放在前端来进行可视化。我们创建了一个简单的网站，并将其打包在一个容器中，该容器将使用 [Nginx](https://hub.docker.com/_/nginx/) 提供服务。当页面加载时，它将调用 Geocoder 服务，返回一个地震事件的数组，包括坐标和震级，并在地图上显示它们。我们还将把它设置为 Knative 服务，这样我们就可以免费获得简易的路由和度量。同样，我们将像其他 Knative 服务一样编写一个 YAML，并使用 Kaniko 构建模板，如 [示例 7-7](#example-7-7) 所示。
 
-*示例 7-7. earthquake-demo/frontend/frontend-service.yaml*
+*<span id="example-7-7">示例 7-7. earthquake-demo/frontend/frontend-service.yaml</span>*
 
 ```YAML
 apiVersion: serving.knative.dev/v1alpha1
@@ -364,9 +364,9 @@ value: "http://geocoder.default.svc.cluster.local"
 ```
 `$ kubectl apply -f earthquake-demo/frontend-service.yaml`
 
-我们定义EVENTS_API环境变量，前端将使用该变量来了解Geocoder服务的位置。最后这一部分就绪后，我们就可以启动并运行整个系统了!我们的应用程序如 图 7-2 所示。
+我们定义EVENTS_API环境变量，前端将使用该变量来了解Geocoder服务的位置。最后这一部分就绪后，我们就可以启动并运行整个系统了!我们的应用程序如 [图 7-2](#pic-7-2) 所示。
 
-![前端界面](images/frontend-ui.png)
+<span id="pic-7-2">![前端界面](images/frontend-ui.png)</span>
 *图 7-2 我们的应用程序启动起来了*
 
 当请求进入我们的前端应用程序时，它将从 Geocoder 服务中提取事件，当新事件进入时，它们将被我们的自定义事件源接收。此外，Knative 还提供了一些额外的工具，通过内置的日志记录、度量和跟踪功能，帮助您保持应用程序和服务的正常运行。
@@ -381,11 +381,11 @@ value: "http://geocoder.default.svc.cluster.local"
 
 这将为访问整个 Kubernetes 集群中打开一个代理，并可以在我们机器的8001端口上访问它。这也包括 Kibana，我们可以通过http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana 访问它。
 
-我们需要提供一个索引模板，我们可以简单地使用 * 和 timestamp_millis 的时间过滤器。最后，如果我们转到 Kibana 的 Discover 选项卡，我们将看到系统中的每个日志！让我们看一下通过如下搜索方式发送到 Geocoder 服务的请求及其结果，如图7-3所示。
+我们需要提供一个索引模板，我们可以简单地使用 * 和 timestamp_millis 的时间过滤器。最后，如果我们转到 Kibana 的 Discover 选项卡，我们将看到系统中的每个日志！让我们看一下通过如下搜索方式发送到 Geocoder 服务的请求及其结果，如 [图7-3](#pic-7-3) 所示。
 
 *localEndpoint.serviceName = geocoder*
 
-![Geocoder](images/Geocoder_kibana.png)
+<span id="pic-7-3">![Geocoder](images/Geocoder_kibana.png)</span>
 *图 7-3。展示我们的Geocoder服务日志的Kibana仪表板*
 
 那么，如果只想看粗略的度量标准呢?看看某些指标比如失败的请求和响应时间可以提供解决我们应用程序问题的线索，Knative 还通过与 Grafana 一起提供非常多的度量指标（从响应代码的分布到我们的服务使用了多少 CPU）来帮助我们解决这个问题。Knative 甚至包括一个仪表盘，用于可视化当前集群的使用情况，以帮助进行容量规划。在加载 Grafana 之前，我们需要使用以下命令将端口转发到 Kubernetes 集群:
@@ -398,19 +398,19 @@ $ kubectl port-forward
     --output=jsonpath="{.items..metadata.name}") 3000
 ```
 
-一旦转发，我们可以通过 http://localhost:3000 访问仪表板。在图7-4中，我们可以看到发送到 Geocoder 服务的请求的图，看起来很好很健康!
+一旦转发，我们可以通过 http://localhost:3000 访问仪表板。在 [图7-4](pic-7-4) 中，我们可以看到发送到 Geocoder 服务的请求的图，看起来很好很健康!
 
-![Geocoder](images/Geocoder_dashboard.png)
+<span id="pic-7-4">![Geocoder](images/Geocoder_dashboard.png)</span>
 *图 7-4 对Geocoder服务的成功和失败请求对比的图表*
 
-最后，Knative 还附带了 Zipkin 来帮助跟踪我们的请求。当请求通过我们的 ingress 网关进入，并到达数据库时，通过一些简单的仪表化，我们可以很好地了解我们的应用程序内部情况。在按照前述设置好代理之后，我们可以通过 http://localhost:8001/api/v1/namespaces/istio-system/services/zipkin:9411/proxy/Zipkin 来访问 Zipkin。一旦进入，我们就可以通过它看到请求如何发送到我们的 Geocoder服务上的，如图 7-5 和图 7-6 所示。
+最后，Knative 还附带了 Zipkin 来帮助跟踪我们的请求。当请求通过我们的 ingress 网关进入，并到达数据库时，通过一些简单的仪表化，我们可以很好地了解我们的应用程序内部情况。在按照前述设置好代理之后，我们可以通过 http://localhost:8001/api/v1/namespaces/istio-system/services/zipkin:9411/proxy/Zipkin 来访问 Zipkin。一旦进入，我们就可以通过它看到请求如何发送到我们的 Geocoder服务上的，如 [图 7-5](#pic-7-5) 和 [图 7-6](#pic-7-6) 所示。
 
-![Geocoder_zipkin1](images/Geocoder_zipkin1.png)
-*图7-5 对一个到Geocoder服务请求的简单跟踪*
+<span id="pic-7-5">![Geocoder_zipkin1](images/Geocoder_zipkin1.png)
+*图7-5 对一个到Geocoder服务请求的简单跟踪*</span>
 
-![Geocoder_zipkin2](images/Geocoder_zipkin2.png)
-*图 7-6 我们的服务请求堆栈时间分解*
+<span id="pic-7-6">![Geocoder_zipkin2](images/Geocoder_zipkin2.png)
+*图 7-6 我们的服务请求堆栈时间分解*</span>
 
 ## 结论
 
-成功了！一个完整的应用程序，带有我们自己定制的事件源。这在很大程度上总结了我们在本书中要学习的内容，但是 Knative 还可以提供更多。同时，Knative 也在不断地发展和完善。当你继续你的旅程时，还有很多资源值得关注，所以在我们结束之前，我们需要知道我们在第8章中还提供其他一些参考资料。
+成功了！一个完整的应用程序，带有我们自己定制的事件源。这在很大程度上总结了我们在本书中要学习的内容，但是 Knative 还可以提供更多。同时，Knative 也在不断地发展和完善。当你继续你的旅程时，还有很多资源值得关注，所以在我们结束之前，我们需要知道我们在[第8章](./what-is-next.md)中还提供其他一些参考资料。
