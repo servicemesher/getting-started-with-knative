@@ -12,7 +12,7 @@ updateDate: 2019-03-03
 
 本章研究 Knative Serving 组件，你将学习 Knative Serving 管理部署并为应用和函数提供服务。Serving 使你很容易部署一个预先构建好的镜像到底层 Kubernetes 集群。(在[第三章： Build](./build.md)，你将看到 Knative Build 可以帮助构建你的镜像以在 Serving 组件中运行该镜像。) Knative Serving 维护某一时刻的快照，提供自动化伸缩功能 (既支持扩容，也支持缩容直至为零)，以及处理必要的路由和网络编排。
 
-Serving 模块定义一组特定的对象以控制所有功能：修订版本 (Revision)、配置 (Configuration)、路由 (Route) 和服务 (Service)。Knative 使用 Kubernetes CRDs (自定义资源) 的方式实现这些 Kubernetes 对象。下图 2-1 展示所有 Serving 组件对象模型间的关系。在接下去的章节将具体介绍每个部分。
+Serving 模块定义一组特定的对象以控制所有功能：Revision (修订版本)、Configuration (配置)、Route (路由) 和 Service (服务)。Knative 使用 Kubernetes CRD (自定义资源) 的方式实现这些 Kubernetes 对象。下图 2-1 展示所有 Serving 组件对象模型间的关系。在接下去的章节将具体介绍每个部分。
 
 <div align="center">
 <img src="images/knative-serving-object-model.jpg" alt="Serving Object Model" />
@@ -24,7 +24,7 @@ Knative Serving 始于 Configuration 。Configuration 是你为一个部署定�
 
 以下[示例 2-1](#example-2-1) 展示了一个完整的 Configuration 定义。它指定一个 Revision，该 Revision 使用一个容器镜像仓库 URI 引用一个特定的镜像并且指定其版本标签。
 
-*<span id="example-2-1">示例 2-1. knative-helloworld/configuration.yml </span>*
+<span id="example-2-1">*示例 2-1. knative-helloworld/configuration.yml* </span>
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -66,9 +66,9 @@ $ kubectl apply -f configuration.yaml
 ```
 >
 
-就像任意 Kubernetes 对象一样，你可以在系统中使用命令行工具 (CLI) 查阅 Revision 和 Configuration 。你可以使用 `kubectl get revisions` 和 `kubectl get configurations` 得到它们的列表。为了获取我们刚刚创建的示例 2-1 的 Configuration，我们使用命令 `kubectl get configuration knative-helloworld -oyaml`。这将以 YAML 形式显示该 Configuration 完整详情 (如下[示例 2-2](#example-2-2))。
+就像任意 Kubernetes 对象一样，你可以在系统中使用命令行工具 (CLI) 查阅 Revision 和 Configuration 。你可以使用 `kubectl get revisions` 和 `kubectl get configurations` 得到它们的列表。为了获取我们刚刚创建[示例 2-1](#example-2-1) 的 Configuration，我们使用命令 `kubectl get configuration knative-helloworld -oyaml`。这将以 YAML 形式显示该 Configuration 完整详情 (如下[示例 2-2](#example-2-2))。
 
-*<span id="example-2-2">示例 2-2. 命令 `kubectl get configuration knative-hellworld -oyaml` 的输出 </span>*
+<span id="example-2-2">*示例 2-2. 命令 `kubectl get configuration knative-hellworld -oyaml` 的输出*</span>
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -116,12 +116,12 @@ status:
 
 > **NOTE**
 >
-> Configuration 可以指定一个已有的容器镜像，就像例子 2-1 中所示。或者，它也可以选择指向一个 Build 资源以从源代码创建一个容器镜像。[第三章：Build](./build.md) 将介绍 Knative Build 组件的详情并提供一些示例。
+> Configuration 可以指定一个已有的容器镜像，如[示例 2-1](#example-2-1) 中所示。或者，它也可以选择指向一个 Build 资源以从源代码创建一个容器镜像。[第三章：Build](./build.md) 将介绍 Knative Build 组件的详情并提供一些示例。
 >
 
-那么在 Kubernetes 集群内部发生了什么？我们在 Configuration 中指定的容器镜像是什么样子？Knative 转换 Configuration 定义为一些 Kubernetes 对象并在集群中创建他们。在启用 Configuration 后，有可以看到相应的 Deployment, ReplicaSet, 和 Pod。[示例 2-3](#example-2-3) 展示了所有来自[示例 2-1](#example-2-1) 所创建的对象。
+那么在 Kubernetes 集群内部发生了什么？我们在 Configuration 中指定的容器镜像是什么样子？Knative 转换 Configuration 定义为一些 Kubernetes 对象并在集群中创建他们。在启用 Configuration 后，可以看到相应的 Deployment, ReplicaSet 和 Pod。[示例 2-3](#example-2-3) 展示了所有来自[示例 2-1](#example-2-1) 所创建的对象。
 
-*<span id="example-2-3">示例 2-3. Knative 创建的 Kubernetes 对象 </span>*
+<span id="example-2-3">*示例 2-3. Knative 创建的 Kubernetes 对象* </span>
 
 ```shell
 $ kubectl get deployments -oname
@@ -137,7 +137,7 @@ pod/knative-helloworld-00001-deployment-5f7b54c768-lrqt5
 现在我们有了用于运行我们应用的 Pod，但是我们怎么知道该向哪里发送请求？这正是 Route 用武之地。
 
 ## Route (路由)
-Knative Route 提供一个路由流量至运行代码的机制。它将一个命名的，HTTP 可寻址端点映射到一个或者多个 Revision。Configuration 本身并不定义 Route。[示例 2-4](#example-2-4) 展示一个最基本的 Route 定义，其发送流量到一个特定 Configuration 的最新 Revision。
+Knative Route 提供一个路由流量至运行代码的机制。它将一个命名的，HTTP 可寻址端点映射到一个或者多个 Revision。Configuration 本身并不定义 Route。[示例 2-4](#example-2-4) 展示一个最基本的 Route 定义，其发送流量到一个指定 Configuration 的最新 Revision。
 
 *<span id="example-2-4">示例 2-4. knative-helloworld/route.yml</span>*
 
@@ -168,7 +168,7 @@ percent: 100
 
 通过使用 `resionName` 替代 `latestReadyRevisionName` ，你可以锁定一个 Route 以发送流量到一个指定的 Revision 。 使用 `name` 属性，你也可以通过可寻址子域名访问 Revision 。[示例 2-5](#example-2-5) 同时展示两种场景。
 
-*<span id="example-2-5">示例 2-5. knative-routing-demo/route.yml</span>*
+<span id="example-2-5">*示例 2-5. knative-routing-demo/route.yml*</span>
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -200,14 +200,15 @@ spec:
 >
 > Knative 默认使用 `example.com` 域名，但不为正式生产使用目的。你会注意到在 `curl` 命令中 URL 作为一个主机头传入 (v1.knative-routing-demo.default.example.com)，其包含默认域名后缀。URL 格式遵循模式 `{REVISION_NAME}.{SERVICE_NAME}.{NAMESPACE}.{DOMAIN}` 。
 >
-> 在这个案例中，子域名中 `default` 部分指的是命名空间。你将在[第六章：部署注意事项](./build.md)一节中学习到如何改变这些值以及如何使用自定义域名。
+> 在这个案例中，子域名中 `default` 部分指的是命名空间。你将在[第六章：部署注意事项](./using-knative.md/#6.2)一节中学习到如何改变这些值以及如何使用自定义域名。
+>
 
-Knative 也允许以百分比的方式跨 Revision 进行流量分配。这支持诸如增量发布、蓝绿部署或者其他复杂的路由场景。你将在[第六章](./build.md)看到这些以及其他案例。
+Knative 也允许以百分比的方式跨 Revision 进行流量分配。支持诸如增量发布、蓝绿部署或者其他复杂的路由场景。你将在[第六章](./using-knative.md)看到这些以及其他案例。
 
 ### Autoscaler (自动伸缩器) 和 Activator (激活器) 
 无服务的一个关键原则是可以按需扩容以满足需要和缩容以节省资源。无服务负载应当可以一直缩容至零。那意味着如果没有进入请求，也就没有容器实例在运行。Knative 使用两个关键组件以实现该功能。它实现了 Autoscaler 和 Activator 作为集群中的 Pods。你可以看到他们伴随其他 Serving 组件一起运行在 `knative-serving` 命名空间中 (参见[示例 2-6](#example-2-6))。
 
-*<span id="example-2-6">示例 2-6. `kubectl get pods -n knative-serving` 输出 </span>*
+<span id="example-2-6">*示例 2-6. `kubectl get pods -n knative-serving` 输出* </span>
 
 ```shell
 NAME                          READY     STATUS    RESTARTS   AGE
@@ -217,9 +218,9 @@ controller-545d44d6b5-2s2vt   1/1       Running   0          7h
 webhook-68fdc88598-qrt52      1/1       Running   0          7h
 ```
 
-Autoscaler 收集打到 Revision 并发请求数量的有关信息。为了做到这一点，它在 Revision Pod 内运行一个称之为 `queue-proxy` 的容器，该 Pod 中也运行用户提供的 (user-provided) 镜像。你可以在相应 Revision Pod 上，通过运行 `kubectl describe` 命令看到这些容器 (参见[示例 2-7](#example-2-7))。
+Autoscaler 收集打到 Revision 并发请求数量的有关信息。为了做到这一点，它在 Revision Pod 内运行一个称之为 `queue-proxy` 的容器，该 Pod 中也运行用户提供的 (user-provided) 镜像。可以在相应 Revision Pod 上，通过运行 `kubectl describe` 命令可以看到这些容器 (参见[示例 2-7](#example-2-7))。
 
-*<span id="example-2-7">示例 2-7. `kubectl describe pod knative-helloworld-00001-deployment-id` 输出片段 </span>*
+<span id="example-2-7">*示例 2-7. `kubectl describe pod knative-helloworld-00001-deployment-id` 输出片段* </span>
 
 ```yaml
 ...
@@ -246,7 +247,7 @@ Containers:
     ceil(1.75) = 2 pods
 ```
 
-Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接受请求。当一个 Revision 停止接受请求时，Autoscaler 将其置为 Reserve (待命) 状态，条件是每 Pod 平均并发必须持续 30 秒保持为 0 (这是默认设置，但是可以配置)。
+Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接受请求。当一个 Revision 停止接受请求时，Autoscaler 将其置为 Reserve (待命) 状态，条件是每 Pod 平均并发必须持续 30 秒保持为 0 (这是默认设置，但可以配置)。
 
 处于 Reserve 状态下，一个 Revision 底层部署缩容至零并且所有到它的流量均路由至 Activator。Activator 是一个共享组件，其捕获所有到待命 Revisios 的流量。当它收到一个到某一待命 Revision 的请求后，它转变 Revision 状态至 Active。然后代理请求至合适的 Pods。
 
@@ -257,7 +258,7 @@ Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接�
 > 如果 6 秒窗口的平均并发量两次到达期望目标，Autoscaler 转换为 Panic Mode 并使用 6 秒时间窗。这让它更加快捷的响应瞬间流量的增长。它也仅仅在 Panic Mode 期间扩容以防止 Pod 数量快速波动。如果超过 60 秒没有扩容发生，Autoscaler 会转换回 Stable Mode。
 >
 
-*<span id="fingure-2-2">图 2-2 显示 Autoscaler 和 Activator 如何和 Routes 及 Revisions 协同工作。</span>*
+<span id="fingure-2-2">*图 2-2 显示 Autoscaler 和 Activator 如何和 Routes 及 Revisions 协同工作。*</span>
 
 <div align="center">
 <img src="images/autoscaler-activator-route-revision.jpg" alt="Autoscaler and Activator with Route and Revision" />
@@ -266,7 +267,7 @@ Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接�
 
 > **WARN**
 >
-> Autoscaler 和 Activator 均是 Knative 中快速演化的部分。参阅[最新 Knative 文档](https://github.com/knative/docs)获取最近更改和增强。
+> Autoscaler 和 Activator 均是 Knative 中快速演化的部分。参阅[最新 Knative 文档](https://github.com/knative/docs)获取最近改进。
 >
 
 ## 服务
