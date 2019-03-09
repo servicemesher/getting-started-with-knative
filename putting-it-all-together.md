@@ -8,18 +8,18 @@ updateDate:
 
 # 演练
 
-让我们把我们所学的一切运用起来去创造一些东西吧!我们进行一个演练，它利用了您前面所学到的许多知识，并通过使用[美国地质勘探局(USGS)地震数据源](https://on.doi.gov/2GmDWNB)的数据提供了一个服务，以可视化地展示世界各地的地震活动。您可以在 GitHub 存储库 [gswk/earthquakedemo](https://github.com/gswk/earthquake-demo) 中找到我们将要介绍的代码。
+让我们把我们所学的一切运用起来去创造一些东西吧!我们进行一个演练，它利用了您前面所学到的许多知识，并通过使用[美国地质勘探局 (USGS) 地震数据源](https://on.doi.gov/2GmDWNB)的数据提供了一个服务，以可视化地展示世界各地的地震活动。您可以在 GitHub 存储库 [gswk/earthquakedemo](https://github.com/gswk/earthquake-demo) 中找到我们将要介绍的代码。
 
 ## 架构
 
-在深入研究代码之前，让我们先看看应用程序的体系架构，如 [图7-1](#pic-7-1)所示。我们在这里构建三个重要的东西:事件源、服务和前端。
+在深入研究代码之前，让我们先看看应用程序的体系架构，如 [图7-1](#pic-7-1) 所示。我们在这里构建三个重要的东西:事件源、服务和前端。
 图中 Knative 内部的每一个组件都代表着我们将利用目前所学的知识来构建的内容，包括使用 Kaniko 构建模板的服务和用于轮询数据的自定义事件源:
 
 *USGS 事件源*
 : 我们将构建一个自定义的 ContainerSource 事件源，它将在给定的时间间隔轮询 USGS 提供的数据。为预构建的容器镜像打包。
 
 <span id="pic-7-1">![arch](images/arch.png)</span>
-*图 7-1 应用程序的体系结构。来自于 USGS 的地震数据源作为事件进入我们的事件源，这将触发我们的GeoCoder服务来持久化事件。我们的前台也将使用我们的Geocoder服务来查询最近的事件。*
+*图 7-1 应用程序的体系结构。来自于 USGS 的地震数据源作为事件进入我们的事件源，这将触发我们的 GeoCoder 服务来持久化事件。我们的前台也将使用我们的 Geocoder 服务来查询最近的事件。*
 
 *Geocoder 服务*
 : 这将为事件源提供 POST 事件的节点，并使用提供的坐标查找地址。它还将作为前端用来查询和检索最近的事件的节点。我们将使用 Build 服务来构建容器镜像。与运行在 Kubernetes 上的 Postgres 数据库通信。
@@ -43,7 +43,7 @@ $ helm install
 
 ## Geocoder 服务
 
-如应用程序体系结构图所示，我们的事件源和前端都将向 Geocoder 服务发送请求，后者将与 Postgres 数据库通信。这将我们的服务置于应用程序的中心位置。对我们服务的 HTTP POST 请求将会在数据库中记录事件，而 GET 请求将检索过去24小时内发生的事件。让我们来看一下[示例 7-1](#example-7-1)中我们服务的代码。
+如应用程序体系结构图所示，我们的事件源和前端都将向 Geocoder 服务发送请求，后者将与 Postgres 数据库通信。这将我们的服务置于应用程序的中心位置。对我们服务的 HTTP POST 请求将会在数据库中记录事件，而 GET 请求将检索过去24小时内发生的事件。让我们来看一下 [示例 7-1](#example-7-1) 中我们服务的代码。
 
 *<span id="example-7-1">示例 7-1 geocoder/app.rb</span>*
 
@@ -280,7 +280,7 @@ while true do
 end
 ```
 
-像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理--sink标志位。我们还提供了一个额外的标记--interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为 Docker 容器并上传到 Dockerhub 上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的我们的事件源的 YAML，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
+像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理 --sink 标志位。我们还提供了一个额外的标记 --interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为 Docker 容器并上传到 Dockerhub 上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的我们的事件源的 YAML，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
 
 *<span id="example-7-5">示例 7-5. earthquake-demo/usgs-event-source.yaml</span>*
 
@@ -379,7 +379,7 @@ value: "http://geocoder.default.svc.cluster.local"
 
 `$ kubectl proxy`
 
-这将为访问整个 Kubernetes 集群中打开一个代理，并可以在我们机器的8001端口上访问它。这也包括 Kibana，我们可以通过http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana 访问它。
+这将为访问整个 Kubernetes 集群中打开一个代理，并可以在我们机器的8001端口上访问它。这也包括 Kibana，我们可以通过 http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana 访问它。
 
 我们需要提供一个索引模板，我们可以简单地使用 * 和 timestamp_millis 的时间过滤器。最后，如果我们转到 Kibana 的 Discover 选项卡，我们将看到系统中的每个日志！让我们看一下通过如下搜索方式发送到 Geocoder 服务的请求及其结果，如 [图7-3](#pic-7-3) 所示。
 
