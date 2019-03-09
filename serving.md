@@ -334,7 +334,7 @@ conditions:
 [示例 2-9](#example-2-9) 显示这个命令的输出。
 
 ## 小结
-现在已经向你介绍了 Service、Routes、Configurations 和 Revisions。Revisions 是不变的并且只能经由 Configuration 改变而被创建。你可以分别单独创建 Configuration 和 Routes，或者把他们组合在一起并定义他们为一个 Service。理解 Serving 组件的这些构建块是使用 Knative 的基础。你部署的应用均需要一个 Service 或者 Configuration 以在 Knative 中作为容器运行。
+至此已经向你介绍了 Service、Route、Configuration 和 Revision。Revision 是不变的并且只能经由 Configuration 改变而被创建。你可以分别单独创建 Configuration 和 Route，或者把它们组合在一起并定义为一个 Service。理解 Serving 组件的这些构建块是使用 Knative 的基础。你部署的应用均需要一个 Service 或者 Configuration 以在 Knative 中作为容器运行。
 
-但是，你如何打包你的源代码进入一个容器镜像好以这种方式进行部署？[第三章](./build.md)将回答这些问题并且向你介绍 Knative Build 组件。
+但是，如何打包你的源代码进入一个容器镜像以使用本章介绍的方式进行部署？[第三章](./build.md)将回答这些问题并且向你介绍 Knative Build 组件。
 
