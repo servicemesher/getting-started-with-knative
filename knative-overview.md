@@ -3,7 +3,7 @@ owner: ["jordanchenCN"]
 reviewer: ["rootsongjc","haiker2011","icyxp","SataQiu"]
 description: "本章是全书的第一章，主要用来介绍 Knative "
 publishDate: 2019-03-05
-updateDate: 2019-03-07
+updateDate: 2019-03-09
 ---
 
 # Knative 概述
