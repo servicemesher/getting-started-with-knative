@@ -13,16 +13,16 @@ updateDate:
 ## 架构
 
 在深入研究代码之前，让我们先看看应用程序的体系架构，如 [图7-1](#pic-7-1)所示。我们在这里构建三个重要的东西:事件源、服务和前端。
-图中 Knative 内部的每一个组件都代表着我们将利用目前所学的知识来构建的内容，包括使用Kaniko构建模板的服务和用于轮询数据的自定义事件源:
+图中 Knative 内部的每一个组件都代表着我们将利用目前所学的知识来构建的内容，包括使用 Kaniko 构建模板的服务和用于轮询数据的自定义事件源:
 
 *USGS 事件源*
-: 我们将构建一个自定义的 ContainerSource 事件源，它将在给定的时间间隔轮询USGS提供的数据。为预构建的容器映像打包。
+: 我们将构建一个自定义的 ContainerSource 事件源，它将在给定的时间间隔轮询 USGS 提供的数据。为预构建的容器镜像打包。
 
 <span id="pic-7-1">![arch](images/arch.png)</span>
 *图 7-1 应用程序的体系结构。来自于 USGS 的地震数据源作为事件进入我们的事件源，这将触发我们的GeoCoder服务来持久化事件。我们的前台也将使用我们的Geocoder服务来查询最近的事件。*
 
 *Geocoder 服务*
-: 这将为事件源提供 POST 事件的节点，并使用提供的坐标查找地址。它还将作为前端用来查询和检索最近的事件的节点。我们将使用 Build 服务来构建容器映像。与运行在 Kubernetes 上的 Postgres 数据库通信。
+: 这将为事件源提供 POST 事件的节点，并使用提供的坐标查找地址。它还将作为前端用来查询和检索最近的事件的节点。我们将使用 Build 服务来构建容器镜像。与运行在 Kubernetes 上的 Postgres 数据库通信。
 
 *前端*
 : 一个可以可视化最近的地震活动的轻量级的、持续运行的前端
@@ -125,7 +125,7 @@ def coords_to_address(lat, lon)
 end
 ```
 
-我们将使用 Knative 为我们构建容器映像，将连接到 Postgres 数据库所需的信息传递给它，并运行我们的服务。我们可以在 [示例7-2](#example-7-2) 中看到这是如何设置的。
+我们将使用 Knative 为我们构建容器镜像，将连接到 Postgres 数据库所需的信息传递给它，并运行我们的服务。我们可以在 [示例7-2](#example-7-2) 中看到这是如何设置的。
 
 *<span id="example-7-2">示例 7-2. earthquake-demo/geocoder-service.yaml</span>*
 
@@ -166,11 +166,11 @@ spec:
 
 `kubectl apply -f earthquake-demo/geocoder-service.yaml`
 
-因为我们已经通过环境变量传递了所有连接信息给我们的Postgres数据库，这是我们的服务运行需要的所有信息。接下来，我们将获取事件源并运行它，以便我们可以开始向新部署的服务发送事件。
+因为我们已经通过环境变量传递了所有连接信息给我们的 Postgres 数据库，这是我们的服务运行需要的所有信息。接下来，我们将获取事件源并运行它，以便我们可以开始向新部署的服务发送事件。
 
 ## USGS 事件源
 
-我们的事件源将负责在指定的时间间隔内轮询USGS地震活动的数据，解析它，并将其发送到我们定义的接收器。由于我们需要轮询数据，并且没有由USGS将其推送给我们的可能，因此它非常适合使用 ContainerSource 编写自定义事件源。
+我们的事件源将负责在指定的时间间隔内轮询USGS地震活动的数据，解析它，并将其发送到我们定义的接收器。由于我们需要轮询数据，并且没有由 USGS 将其推送给我们的可能，因此它非常适合使用 ContainerSource 编写自定义事件源。
 
 在设置事件源之前，还需要一个事件发送的通道。虽然我们可以直接将事件从事件源发送到我们的服务，但如果我们希望将来能够将事件发送到另一个服务，这将给我们带来一些灵活性。我们只需要一个简单的通道，我们将在 [示例 7-3](#example-7-3) 中定义它。
 
@@ -280,7 +280,7 @@ while true do
 end
 ```
 
-像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理--sink标志位。我们还提供了一个额外的标记--interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为Docker容器并上传到Dockerhub上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的我们的事件源的 YAML，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
+像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理--sink标志位。我们还提供了一个额外的标记--interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为 Docker 容器并上传到 Dockerhub 上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的我们的事件源的 YAML，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
 
 *<span id="example-7-5">示例 7-5. earthquake-demo/usgs-event-source.yaml</span>*
 
@@ -303,7 +303,7 @@ name: geocoder
 
 `$ kubectl apply -f earthquake-demo/subscription.yaml`
 
-一旦我们应用这个YAML，事件源将启动一个持续运行的容器，该容器将轮询事件并将它们发送到我们创建的通道中。另外，我们需要将Geocoder服务连接到通道中。
+一旦我们应用这个 YAML，事件源将启动一个持续运行的容器，该容器将轮询事件并将它们发送到我们创建的通道中。另外，我们需要将 Geocoder 服务连接到通道中。
 
 *<span id="example-7-6">示例 7-6. earthquake-demo/subscription.yaml</span>*
 
@@ -326,7 +326,7 @@ name: geocoder
 
 `$ kubectl apply -f earthquake-demo/subscription.yaml`
 
-创建了订阅之后，我们已经将所有内容连接起来，以便将事件通过自定义事件源带到环境中，然后将它们发送到服务中，服务将把它们持久化到Postgres数据库中。我们还有最后一个要部署的部分，那就是我们的前端，用来可视化所有东西。
+创建了订阅之后，我们已经将所有内容连接起来，以便将事件通过自定义事件源带到环境中，然后将它们发送到服务中，服务将把它们持久化到 Postgres 数据库中。我们还有最后一个要部署的部分，那就是我们的前端，用来可视化所有东西。
 
 ## 前端
 
@@ -364,7 +364,7 @@ value: "http://geocoder.default.svc.cluster.local"
 ```
 `$ kubectl apply -f earthquake-demo/frontend-service.yaml`
 
-我们定义EVENTS_API环境变量，前端将使用该变量来了解Geocoder服务的位置。最后这一部分就绪后，我们就可以启动并运行整个系统了!我们的应用程序如 [图 7-2](#pic-7-2) 所示。
+我们定义 EVENTS_API 环境变量，前端将使用该变量来了解 Geocoder 服务的位置。最后这一部分就绪后，我们就可以启动并运行整个系统了!我们的应用程序如 [图 7-2](#pic-7-2) 所示。
 
 <span id="pic-7-2">![前端界面](images/frontend-ui.png)</span>
 *图 7-2 我们的应用程序启动起来了*
