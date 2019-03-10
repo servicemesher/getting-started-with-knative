@@ -1,14 +1,14 @@
 ---
 owner: ["jordanchenCN"]
 reviewer: ["rootsongjc","haiker2011","icyxp","SataQiu"]
-description: "本章是全书的第一章，主要用来介绍 Knative "
+description: "本章是全书的第一章，主要用来介绍 Knative。"
 publishDate: 2019-03-05
-updateDate: 2019-03-09
+updateDate: 2019-03-10
 ---
 
 # Knative 概述
 
-我们有一个信念：以平台的方式提供软件是一个最佳选择。事实证明，标准化的开发和部署流程能让开发人员更专注于新功能的研发，从而减少时间和金钱上的消耗。不仅如此，确保应用程序之间的一致性也意味着其更容易打补丁，更新和监控，从而让运维工作也更加高效。 Knative 的目标就是成为这样的现代化平台。
+我们有一个信念：以平台的方式提供软件是一个最佳选择。事实证明，标准化的开发和部署流程能让开发人员更专注于新功能的研发，从而减少时间和金钱上的消耗。不仅如此，确保应用程序之间的一致性也意味着其更容易打补丁，更新和监控，从而让运维工作也更加高效。Knative 的目标就是成为这样的现代化平台。
 
 ## 什么是 Knative 
 
@@ -16,7 +16,8 @@ updateDate: 2019-03-09
 
 为此，Knative 将重点放在三个关键组件上：*build（构建）*你的应用程序，为其提供流量*serving（服务）*，以及确保应用程序能够轻松地生产和消费*event（事件）*。
 
-*build（构建）*
+*Build（构建）*
+
 >通过灵活的插件化的构建系统将用户源代码构建成容器。目前已经支持多个构建系统，比如 Google 的 Kaniko，它无需运行 Docker daemon 就可以在 Kubernetes 集群上构建容器镜像。
 
 *Serving（服务）*
@@ -25,17 +26,17 @@ updateDate: 2019-03-09
 *Event（事件）*
 >使得生产和消费事件变得容易。抽象出事件源，并允许操作人员使用自己选择的消息传递层。
 
-Knative 是以 Kubernetes 的一组自定义资源类型(CRD)的方式来安装的，因此只需使用几个 YAML 文件就可以轻松地开始使用 Knative 了。
+Knative 是以 Kubernetes 的一组自定义资源类型（CRD）的方式来安装的，因此只需使用几个 YAML 文件就可以轻松地开始使用 Knative 了。
 
 |Kubernetes 知识|
 |:---|
-|由于 Knative 是 Kubernetes 的一系列扩展，因此建议你先了解下 Kubernetes 和 Docker 的结构和术语。今后我们会提及以下术语，比如 namespace， Deployment， ReplicaSet和 Pod。熟悉这些 Kubernetes 术语将帮助你在阅读时更好地理解 Knative 的基本工作。如果你对任何一个都不熟悉，那么这两个链接：[Kubernetes](https://kubernetes.io/docs/tutorials/kubernetes-basics/) 和 [Docker](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#objectreference-v1-core) 上都有很棒的培训材料，可以直接在浏览器上阅读。|
+|由于 Knative 是基于 Kubernetes 的一系列扩展，因此建议你先了解下 Kubernetes 和 Docker 的架构和术语。今后我们会提及以下术语，比如 namespace、Deployment、ReplicaSet 和 Pod。熟悉这些 Kubernetes 术语将帮助你在阅读时更好地理解 Knative 的基本工作。如果你对这些都不熟悉，那么这两个链接：[Kubernetes](https://kubernetes.io/docs/tutorials/kubernetes-basics/) 和 [Docker](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#objectreference-v1-core) 上都有很棒的培训材料，可以直接在浏览器上阅读。|
 
 ## 无服务器架构（serverless）？
 
 到目前为止，我们已经讨论了应用程序的容器化。但都2019年了，我们读了半章却还没有提到“无服务器架构（serverless）”这个词。也许作为当今技术中被提到最多的一个词，无服务器架构（serverless）仍然在寻找一个整个行业都能认同的定义。许多人都同意这个理念的影响最大的是代码量，比如以前需要编写大型、单一的应用程序，现在你只需编写通过*事件*来调用的小型、单一用途的*函数*即可。这些*事件*可以简单到是一个 HTTP 请求或一个来自消息通道（如 Apache Kafka）的消息。同时*事件*也可能是间接的，比如这些操作：将图像上传到 Google Cloud Storage或更新了 Amazon 的 DynamoDB 中的一张表。
 
-许多人也都同意这表示着你的代码只在处理请求时才用到计算资源。对于很多托管服务来说，如 Amazon 的 Lambda 或 Google Cloud Functions，这意味着你只需要为活跃期间的计算服务付费，而不是一台7*24小时运行并可能在大部分时间内无所事事的虚拟机。在本地或非托管的无服务器架构（serverless）平台上，则表示代码可以只在需要时运行，在不需要时就停止，从而让你的基础设施能在其他方面自由使用计算资源。
+许多人也都同意这表示着你的代码只在处理请求时才用到计算资源。对于很多托管服务来说，如 Amazon 的 Lambda 或 Google Cloud Functions，这意味着你只需要为活跃期间的计算服务付费，而不是一台7x24小时运行并可能在大部分时间内无所事事的虚拟机。在本地或非托管的无服务器架构（serverless）平台上，则表示代码可以只在需要时运行，在不需要时就停止，从而让你的基础设施能在其他方面自由使用计算资源。
 
 在这些基础原理之上的是一场圣战。有些人坚持无服务器架构（serverless）只适合在托管的云环境中运行，在本地运行这样的平台完全是不对的。其他人则认为它更像是一种哲学理论上的设计。也许这些定义最后会合并，也许不会。就目前来说，随着无服务器架构（serverless）普及率的持续增长，Knative 最有可能成为其标准。
 
