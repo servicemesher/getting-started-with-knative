@@ -1,7 +1,7 @@
 ---
 owner: [Zhang Xiaopeng]
 reviewer: []
-description: "通过一个可视化地展示世界各地的地震活动的演练，将前几章所学知识进行了一个串联。其中原文中bit.ly链接无法打开，前端容器镜像也无法访问到。"
+description: "通过一个可视化地展示世界各地的地震活动的演练，将前几章所学知识进行了一个串联。存在问题: 原文中 bit.ly 链接无法打开，前端容器镜像也无法访问到。"
 publishDate: 
 updateDate:
 ---
@@ -170,7 +170,7 @@ spec:
 
 ## USGS 事件源
 
-我们的事件源将负责在指定的时间间隔内轮询USGS地震活动的数据，解析它，并将其发送到我们定义的接收器。由于我们需要轮询数据，并且没有由 USGS 将其推送给我们的可能，因此它非常适合使用 ContainerSource 编写自定义事件源。
+我们的事件源将负责在指定的时间间隔内轮询 USGS 地震活动的数据，解析它，并将其发送到我们定义的接收器。由于我们需要轮询数据，并且没有由 USGS 将其推送给我们的可能，因此它非常适合使用 ContainerSource 编写自定义事件源。
 
 在设置事件源之前，还需要一个事件发送的通道。虽然我们可以直接将事件从事件源发送到我们的服务，但如果我们希望将来能够将事件发送到另一个服务，这将给我们带来一些灵活性。我们只需要一个简单的通道，我们将在 [示例 7-3](#example-7-3) 中定义它。
 
@@ -280,7 +280,7 @@ while true do
 end
 ```
 
-像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理 --sink 标志位。我们还提供了一个额外的标记 --interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为 Docker 容器并上传到 Dockerhub 上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的我们的事件源的 YAML，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
+像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理 --sink 标志位。我们还提供了一个额外的标记 --interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为 Docker 镜像并上传到 Dockerhub 上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的我们的事件源的 YAML，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
 
 *<span id="example-7-5">示例 7-5. earthquake-demo/usgs-event-source.yaml</span>*
 
@@ -330,7 +330,7 @@ name: geocoder
 
 ## 前端
 
-最后，我们需要把我们收集的所有数据一起放在前端来进行可视化。我们创建了一个简单的网站，并将其打包在一个容器中，该容器将使用 [Nginx](https://hub.docker.com/_/nginx/) 提供服务。当页面加载时，它将调用 Geocoder 服务，返回一个地震事件的数组，包括坐标和震级，并在地图上显示它们。我们还将把它设置为 Knative 服务，这样我们就可以免费获得简易的路由和度量。同样，我们将像其他 Knative 服务一样编写一个 YAML，并使用 Kaniko 构建模板，如 [示例 7-7](#example-7-7) 所示。
+最后，我们需要把我们收集的所有数据一起放在前端来进行可视化。我们创建了一个简单的网站，并将其打包在一个容器镜像中，该容器镜像将使用 [Nginx](https://hub.docker.com/_/nginx/) 提供服务。当页面加载时，它将调用 Geocoder 服务，返回一个地震事件的数组，包括坐标和震级，并在地图上显示它们。我们还将把它设置为 Knative 服务，这样我们就可以免费获得简易的路由和度量。同样，我们将像其他 Knative 服务一样编写一个 YAML，并使用 Kaniko 构建模板，如 [示例 7-7](#example-7-7) 所示。
 
 *<span id="example-7-7">示例 7-7. earthquake-demo/frontend/frontend-service.yaml</span>*
 
