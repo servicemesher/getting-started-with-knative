@@ -119,7 +119,7 @@ status:
 > Configuration 可以指定一个已有的容器镜像，如[示例 2-1](#example-2-1) 中所示。或者，它也可以选择指向一个 Build 资源以从源代码创建一个容器镜像。[第三章：Build](./build.md) 将介绍 Knative Build 组件的详情并提供一些示例。
 >
 
-那么在 Kubernetes 集群内部发生了什么？我们在 Configuration 中指定的容器镜像是什么样子？Knative 转换 Configuration 定义为一些 Kubernetes 对象并在集群中创建他们。在启用 Configuration 后，可以看到相应的 Deployment, ReplicaSet 和 Pod。[示例 2-3](#example-2-3) 展示了所有来自[示例 2-1](#example-2-1) 所创建的对象。
+那么在 Kubernetes 集群内部发生了什么？我们在 Configuration 中指定的容器镜像是什么样子？Knative 转换 Configuration 定义为一些 Kubernetes 对象并在集群中创建它们。在启用 Configuration 后，可以看到相应的 Deployment, ReplicaSet 和 Pod。[示例 2-3](#example-2-3) 展示了所有来自[示例 2-1](#example-2-1) 所创建的对象。
 
 <span id="example-2-3">*示例 2-3. Knative 创建的 Kubernetes 对象* </span>
 
@@ -206,7 +206,7 @@ spec:
 Knative 也允许以百分比的方式跨 Revision 进行流量分配。支持诸如增量发布、蓝绿部署或者其他复杂的路由场景。您将在[第六章](./using-knative.md)看到这些以及其他案例。
 
 ### Autoscaler (自动伸缩器) 和 Activator (激活器) 
-无服务的一个关键原则是可以按需扩容以满足需要和缩容以节省资源。无服务负载应当可以一直缩容至零。这意味着如果没有请求进入，则不会运行容器实例。Knative 使用两个关键组件以实现该功能。它实现了 Autoscaler 和 Activator 作为集群中的 Pods。您可以看到他们伴随其他 Serving 组件一起运行在 `knative-serving` 命名空间中 (参见[示例 2-6](#example-2-6))。
+无服务的一个关键原则是可以按需扩容以满足需要和缩容以节省资源。无服务负载应当可以一直缩容至零。这意味着如果没有请求进入，则不会运行容器实例。Knative 使用两个关键组件以实现该功能。它将 Autoscaler 和 Activator 实现为集群中的 Pods。您可以看到他们伴随其他 Serving 组件一起运行在 `knative-serving` 命名空间中 (参见[示例 2-6](#example-2-6))。
 
 <span id="example-2-6">*示例 2-6. `kubectl get pods -n knative-serving` 输出* </span>
 
