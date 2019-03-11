@@ -8,14 +8,14 @@ updateDate: 2019-03-03
 
 # Serving（服务）
 
-即便使用无服务器架构，处理和响应 HTTP 请求的能力依然是重要的概念。在你开始写一些代码并使用事件触发一个函数之前，你需要一个地方来运行你的代码。
+即便使用无服务器架构，处理和响应 HTTP 请求的能力依然重要。在开始写一些代码并使用事件触发一个函数之前，你需要一个地方来运行你的代码。
 
 本章研究 Knative Serving 组件，你将学习 Knative Serving 管理部署并为应用和函数提供服务。Serving 使你很容易部署一个预先构建好的镜像到底层 Kubernetes 集群。(在[第三章： Build](./build.md)，你将看到 Knative Build 可以帮助构建你的镜像以在 Serving 组件中运行该镜像。) Knative Serving 维护某一时刻的快照，提供自动化伸缩功能 (既支持扩容，也支持缩容直至为零)，以及处理必要的路由和网络编排。
 
 Serving 模块定义一组特定的对象以控制所有功能：Revision (修订版本)、Configuration (配置)、Route (路由) 和 Service (服务)。Knative 使用 Kubernetes CRD (自定义资源) 的方式实现这些 Kubernetes 对象。下图 2-1 展示所有 Serving 组件对象模型间的关系。在接下去的章节将具体介绍每个部分。
 
 <div align="center">
-<img src="images/knative-serving-object-model.jpg" alt="Serving Object Model" />
+<img src="https://ws2.sinaimg.cn/large/006tKfTcly1g0yrmo1t2cj31z70u0afi.jpg" alt="Serving Object Model"/>
 图 2-1: Knative Serving 对象模型
 </div>
 
@@ -261,7 +261,7 @@ Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接�
 <span id="fingure-2-2">*图 2-2 显示 Autoscaler 和 Activator 如何和 Routes 及 Revisions 协同工作。*</span>
 
 <div align="center">
-<img src="images/autoscaler-activator-route-revision.jpg" alt="Autoscaler and Activator with Route and Revision" />
+<img src="https://ws1.sinaimg.cn/large/006tKfTcly1g0yrpiumcqj31230u0jxo.jpg" alt="Autoscaler and Activator with Route and Revision" />
 图 2-2: Autoscaler 和 Activator 如何和 Routes 及 Revisions 互动。
 </div>
 
