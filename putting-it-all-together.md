@@ -1,6 +1,6 @@
 ---
-owner: [Zhang Xiaopeng]
-reviewer: []
+owner: [eportzxp]
+reviewer: [haiker2011,SataQiu,rootsongjc]
 description: "通过一个可视化地展示世界各地的地震活动的演练，将前几章所学知识进行了一个串联。存在问题: 原文中 bit.ly 链接无法打开，前端容器镜像也无法访问到。"
 publishDate: 
 updateDate:
