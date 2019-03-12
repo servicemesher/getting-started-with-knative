@@ -44,7 +44,7 @@ spec:
 
 现在，您可以用一个简单的命令启用该 YAML 文件：
 
-```shell
+```bash
 $ kubectl apply -f configuration.yaml
 ```
 
@@ -122,7 +122,7 @@ status:
 
 <span id="example-2-3">*示例 2-3. Knative 创建的 Kubernetes 对象* </span>
 
-```shell
+```bash
 $ kubectl get deployments -oname
 deployment.extensions/knative-helloworld-00001-deployment
 
@@ -154,13 +154,13 @@ percent: 100
 
 就像我们对 Configuration 所做的那样，我们可以运行一个简单的命令应用该 YAML 文件：
 
-```shell
+```bash
 kubectl apply -f route.yaml
 ```
 
 这个定义中，Route 发送 100% 流量到由 `configurationName` 属性指定 Configuration 的最新就绪 Revision，该 Revision 由 Configuration YAML 中 `latestReadyRevisionName` 属性定义。您可以通过发送如下 `curl` 命令来测试这些 Route 和 Configuration ：
 
-```shell
+```bash
 curl -H "Host: knative-routing-demo.default.example.com"
 http://$KNATIVE_INGRESS
 ```
@@ -184,13 +184,13 @@ spec:
 
 我们可以再一次使用简单命令应用该 YAML 文件：
 
-```shell
+```bash
 kubectl apply -f route.yaml
 ```
 
 指定的 Revision 可以使用 `v1` 子域名访问，如下 `curl` 命令所示：
 
-```shell
+```bash
 curl -H "Host: v1.knative-routing-demo.default.example.com"
 http://$KNATIVE_INGRESS
 ```
@@ -209,7 +209,7 @@ Serverless 的一个关键原则是可以按需扩容以满足需要和缩容以
 
 <span id="example-2-6">*示例 2-6. `kubectl get pods -n knative-serving` 输出* </span>
 
-```shell
+```bash
 NAME                          READY     STATUS    RESTARTS   AGE
 activator-69dc4755b5-p2m5h    2/2       Running   0          7h
 autoscaler-7645479876-4h2ds   2/2       Running   0          7h
