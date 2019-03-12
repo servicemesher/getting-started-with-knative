@@ -3,24 +3,24 @@ owner: ["junahan"]
 reviewer: ["haiker2011", "SataQiu", "rootsongjc", "icyxp"]
 description: "本章介绍 Knative Serving 组件，描述 Knative Serving 如何部署并为应用和函数 (funtions) 提供服务。"
 publishDate: 2019-03-03
-updateDate: 2019-03-11 
+updateDate: 2019-03-12
 ---
 
 # Serving（服务）
 
-即便使用无服务器架构，处理和响应 HTTP 请求的能力依然重要。在开始写一些代码并使用事件触发一个函数之前，您需要一个地方来运行您的代码。
+即便使用无服务器架构，处理和响应 HTTP 请求的能力依然重要。在开始写代码使用事件触发一个函数之前，您需要有地方来运行代码。
 
-本章探讨 Knative Serving 组件，您将了解 Knative Serving 如何管理部署以及为应用和函数提供服务。通过 Serving，您可以轻松地将一个预先构建好的镜像部署到底层 Kubernetes 集群中。(在[第三章： Build](./build.md)，您将看到 Knative Build 可以帮助构建镜像以在 Serving 组件中运行该它。) Knative Serving 维护某一时刻的快照，提供自动化伸缩功能 (既支持扩容，也支持缩容直至为零)，以及处理必要的路由和网络编排。
+本章探讨 Knative Serving 组件，您将了解 Knative Serving 如何管理部署以及为应用和函数提供服务。通过 Serving，您可以轻松地将一个预先构建好的镜像部署到底层 Kubernetes 集群中。（在[第三章： Build](./build.md)，您将看到 Knative Build 可以帮助构建镜像以在 Serving 组件中运行）Knative Serving 维护某一时刻的快照，提供自动化伸缩功能 (既支持扩容，也支持缩容直至为零)，以及处理必要的路由和网络编排。
 
-Serving 模块定义一组特定的对象以控制所有功能：Revision (修订版本)、Configuration (配置)、Route (路由) 和 Service (服务)。Knative 使用 Kubernetes CRD (自定义资源) 的方式实现这些 Kubernetes 对象。下图 2-1 展示所有 Serving 组件对象模型间的关系。在接下去的章节将具体介绍每个部分。
+Serving 模块定义一组特定的对象以控制所有功能：Revision（修订版本）、Configuration （配置）、Route（路由）和 Service（服务）。Knative 使用 Kubernetes CRD（自定义资源）的方式实现这些 Kubernetes 对象。下图 2-1 展示所有 Serving 组件对象模型间的关系。在接下去的章节将具体介绍每个部分。
 
 <div align="center">
 <img src="https://ws1.sinaimg.cn/large/006tKfTcly1g0yrpiumcqj31230u0jxo.jpg" alt="Serving Object Model"/>
 图 2-1: Knative Serving 对象模型
 </div>
 
-## Configuration (配置) 和 Revision (修订版本)
-Knative Serving 始于 Configuration。您可以在 Configuration 中为部署定义所需的状态。最小化 Configuration 至少包括一个配置名称和一个要部署容器镜像的引用。在 Knative 中，您定义这个引用为一个 Revision。Revision 代表一个不变的，某一时刻的代码和 Configuration 的快照。每个 Revision 引用一个特定的容器镜像和运行它所需要的任何特定对象 (例如环境变量和卷)。然而，您不必显式创建一个 Revision。由于 Revision 是不变的，它们从不会被改变和删除，相反，当您修改 Configuration 的时候，Knative 会创建一个 Revision。这允许一个 Configuration 既反映工作负载的当前状态，于此同时也维护一个它自己的历史 Revision 列表。
+## Configuration（配置）和 Revision（修订版本）
+Knative Serving 始于 Configuration。您可以在 Configuration 中为部署定义所需的状态。最小化 Configuration 至少包括一个配置名称和一个要部署容器镜像的引用。在 Knative 中，定义的引用为 Revision。Revision 代表一个不变的，某一时刻的代码和 Configuration 的快照。每个 Revision 引用一个特定的容器镜像和运行它所需要的任何特定对象（例如环境变量和卷）。然而，您不必显式创建 Revision。由于 Revision 是不变的，它们从不会被改变和删除，相反，当您修改 Configuration 的时候，Knative 会创建一个 Revision。这允许一个 Configuration 既反映工作负载的当前状态，同时也维护一个它自己的历史 Revision 列表。
 
 以下[示例 2-1](#example-2-1) 展示了一个完整的 Configuration 定义。它指定一个 Revision，该 Revision 使用一个容器镜像仓库 URI 引用一个特定的镜像并且指定其版本标签。
 
@@ -48,11 +48,11 @@ spec:
 $ kubectl apply -f configuration.yaml
 ```
 
-> **自定义端口**
->
-> 默认情况下，Knative 将假定您的应用程序侦听8080 端口。但是，如果不是这种情况，您可以通过 `containerPort` 参数自定义一个端口：
->
-> ```yaml
+**自定义端口**
+
+默认情况下，Knative 将假定您的应用程序监听 8080 端口。但是，如果不是这样的话，您可以通过 `containerPort` 参数自定义一个端口：
+
+```yaml
     spec:
       revisionTemplate:
         spec:
@@ -64,9 +64,8 @@ $ kubectl apply -f configuration.yaml
             ports:
               - containerPort: 8081
 ```
->
 
-就像任意 Kubernetes 对象一样，您可以在系统中使用命令行工具 (CLI) 查阅 Revision 和 Configuration 。您可以使用 `kubectl get revisions` 和 `kubectl get configurations` 得到它们的列表。为了获取我们刚刚创建[示例 2-1](#example-2-1) 的 Configuration，我们使用命令 `kubectl get configuration knative-helloworld -oyaml`。这将以 YAML 形式显示该 Configuration 完整详情 (如下[示例 2-2](#example-2-2))。
+就像任意 Kubernetes 对象一样，您可以在系统中使用命令行工具（CLI）查阅 Revision 和 Configuration。您可以使用 `kubectl get revisions` 和 `kubectl get configurations` 得到它们的列表。获取我们刚刚创建[示例 2-1](#example-2-1) 的 Configuration，可以使用命令 `kubectl get configuration knative-helloworld -oyaml`。这将以 YAML 形式显示该 Configuration 完整详情（如下[示例 2-2](#example-2-2)）。
 
 <span id="example-2-2">*示例 2-2. 命令 `kubectl get configuration knative-hellworld -oyaml` 的输出*</span>
 
@@ -119,7 +118,7 @@ status:
 > Configuration 可以指定一个已有的容器镜像，如[示例 2-1](#example-2-1) 中所示。或者，它也可以选择指向一个 Build 资源以从源代码创建一个容器镜像。[第三章：Build](./build.md) 将介绍 Knative Build 组件的详情并提供一些示例。
 >
 
-那么在 Kubernetes 集群内部发生了什么？我们在 Configuration 中指定的容器镜像是什么样子？Knative 转换 Configuration 定义为一些 Kubernetes 对象并在集群中创建它们。在启用 Configuration 后，可以看到相应的 Deployment, ReplicaSet 和 Pod。[示例 2-3](#example-2-3) 展示了所有来自[示例 2-1](#example-2-1) 所创建的对象。
+那么在 Kubernetes 集群内部发生了什么？我们在 Configuration 中指定的容器镜像是什么样子？Knative 转换 Configuration 定义为一些 Kubernetes 对象并在集群中创建它们。在启用 Configuration 后，可以看到相应的 Deployment、ReplicaSet 和 Pod。[示例 2-3](#example-2-3) 展示了所有来自[示例 2-1](#example-2-1) 所创建的对象。
 
 <span id="example-2-3">*示例 2-3. Knative 创建的 Kubernetes 对象* </span>
 
@@ -136,7 +135,7 @@ pod/knative-helloworld-00001-deployment-5f7b54c768-lrqt5
 
 现在我们有了用于运行我们应用的 Pod，但是我们怎么知道该向哪里发送请求？这正是 Route 用武之地。
 
-## Route (路由)
+## Route（路由）
 Knative 中的 Route 提供了一种将流量路由到正在运行的代码的机制。它将一个命名的，HTTP 可寻址端点映射到一个或者多个 Revision。Configuration 本身并不定义 Route。[示例 2-4](#example-2-4) 展示了一个将流量发送到指定 Configuration 最新 Revision 的最基本路由定义。
 
 *<span id="example-2-4">示例 2-4. knative-helloworld/route.yml</span>*
@@ -156,17 +155,17 @@ percent: 100
 就像我们对 Configuration 所做的那样，我们可以运行一个简单的命令应用该 YAML 文件：
 
 ```shell
-    kubectl apply -f route.yaml
+kubectl apply -f route.yaml
 ```
 
 这个定义中，Route 发送 100% 流量到由 `configurationName` 属性指定 Configuration 的最新就绪 Revision，该 Revision 由 Configuration YAML 中 `latestReadyRevisionName` 属性定义。您可以通过发送如下 `curl` 命令来测试这些 Route 和 Configuration ：
 
-```shll
-    curl -H "Host: knative-routing-demo.default.example.com"
-    http://$KNATIVE_INGRESS
+```shell
+curl -H "Host: knative-routing-demo.default.example.com"
+http://$KNATIVE_INGRESS
 ```
 
-通过使用 `resionName` 替代 `latestReadyRevisionName` ，您可以锁定一个 Route 以发送流量到一个指定的 Revision 。 使用 `name` 属性，您也可以通过可寻址子域名访问 Revision 。[示例 2-5](#example-2-5) 同时展示两种场景。
+通过使用 `revisionName` 替代 `latestReadyRevisionName` ，您可以锁定一个 Route 以发送流量到一个指定的 Revision。使用 `name` 属性，您也可以通过可寻址子域名访问 Revision。[示例 2-5](#example-2-5) 同时展示两种场景。
 
 <span id="example-2-5">*示例 2-5. knative-routing-demo/route.yml*</span>
 
@@ -186,14 +185,14 @@ spec:
 我们可以再一次使用简单命令应用该 YAML 文件：
 
 ```shell
-    kubectl apply -f route.yaml
+kubectl apply -f route.yaml
 ```
 
 指定的 Revision 可以使用 `v1` 子域名访问，如下 `curl` 命令所示：
 
 ```shell
-    curl -H "Host: v1.knative-routing-demo.default.example.com"
-    http://$KNATIVE_INGRESS
+curl -H "Host: v1.knative-routing-demo.default.example.com"
+http://$KNATIVE_INGRESS
 ```
 
 > **NOTE**
@@ -205,8 +204,8 @@ spec:
 
 Knative 也允许以百分比的方式跨 Revision 进行流量分配。支持诸如增量发布、蓝绿部署或者其他复杂的路由场景。您将在[第六章](./using-knative.md)看到这些以及其他案例。
 
-### Autoscaler (自动伸缩器) 和 Activator (激活器) 
-无服务的一个关键原则是可以按需扩容以满足需要和缩容以节省资源。无服务负载应当可以一直缩容至零。这意味着如果没有请求进入，则不会运行容器实例。Knative 使用两个关键组件以实现该功能。它将 Autoscaler 和 Activator 实现为集群中的 Pods。您可以看到他们伴随其他 Serving 组件一起运行在 `knative-serving` 命名空间中 (参见[示例 2-6](#example-2-6))。
+### Autoscaler（自动伸缩器）和 Activator（激活器）
+Serverless 的一个关键原则是可以按需扩容以满足需要和缩容以节省资源。Serverless 负载应当可以一直缩容至零。这意味着如果没有请求进入，则不会运行容器实例。Knative 使用两个关键组件以实现该功能。它将 Autoscaler 和 Activator 实现为集群中的 Pod。您可以看到它们伴随其他 Serving 组件一起运行在 `knative-serving` 命名空间中（参见[示例 2-6](#example-2-6)）。
 
 <span id="example-2-6">*示例 2-6. `kubectl get pods -n knative-serving` 输出* </span>
 
@@ -235,16 +234,16 @@ Containers:
 ...
 ```
 
-`queue-proxy` 检测该 Revision 上观察到的并发量，然后它每隔一秒将此数据发送到 Autoscaler。 Autoscaler 每两秒对这些指标进行评估。基于评估的结果，它增加或者减少 Revision 部署的规模。
+`queue-proxy` 检测该 Revision 上观察到的并发量，然后它每隔一秒将此数据发送到 Autoscaler。Autoscaler 每两秒对这些指标进行评估。基于评估的结果，它增加或者减少 Revision 部署的规模。
 
 默认情况下，Autoscaler 尝试维持每 Pod 每秒平均 100 个并发请求。这些并发目标和平均并发窗口均可以变化。Autoscaler 也能够被配置为利用 Kubernets HPA (Horizontal Pod Autoscaler) 来替代该默认配置。这将基于 CPU 使用率来自动伸缩但不支持缩容至零。这些设定都能够通过 Revision 元数据注解 (annotations) 定制。有关这些注解的详情，请参阅 [Knative 文档](https://github.com/knative/docs/blob/master/serving/samples/autoscale-go/README.md)。
 
 例如，一个 Revision 每秒收到 350 个请求并且每次请求大约需要处理 0.5 秒。使用默认设置 (每 Pod 100 个并发请求)，这个 Revision 将扩展至两个 Pod：
 
 ```
-    350 * .5 = 175
-    175 / 100 = 1.75
-    ceil(1.75) = 2 pods
+350 * .5 = 175
+175 / 100 = 1.75
+ceil(1.75) = 2 pods
 ```
 
 Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接受请求。当一个 Revision 停止接受请求时，Autoscaler 将其置为 Reserve (待命) 状态，条件是每 Pod 平均并发必须持续 30 秒保持为 0 (这是默认设置，但可以配置)。
@@ -271,11 +270,11 @@ Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接�
 >
 
 ## 服务
-在 Knative 中，Service 管理负责的整个生命周期。包括部署、路由和回滚。(不要将 Knative Service 和 Kubernetes [Service](https://kubernetes.io/docs/concepts/services-networking/service/) 混淆。他们是不同的资源。) Knative Service 控制一系列组成软件的 Routes 和 Configurations。Knative Service 可以被看作是一段代码 —— 您正在部署的应用或者函数。
+在 Knative 中，Service 管理负责的整个生命周期。包括部署、路由和回滚。（不要将 Knative Service 和 Kubernetes [Service](https://kubernetes.io/docs/concepts/services-networking/service/) 混淆。它们是不同的资源。） Knative Service 控制一系列组成软件的 Route 和 Configuration。Knative Service 可以被看作是一段代码 —— 您正在部署的应用或者函数。
 
 一个 Service 注意确保一个应用有一个 Route、一个 Configuation，以及为每次 Service 更新产生的一个新 Revision。当创建一个 Service 时，您没有特别定义一个 Route，Knative 创建一个发送流量到最新 Revision 的路由。您可以选择一个特定的 Revision 以路由流量到该 Revision。
 
-不要求您明确创建一个 Service。Routes 和 Configurations 可以被分开在不同的 YAML 文件 (如[示例 2-1](#example-2-1) 和 [示例 2-4](#example-2-4))。在这种情形下，您可以应用每个单独的对象到集群。然而，推荐的方式使用一个 Service 来编排 Route 和 Configuration。[示例 2-8](#example-2-8) 所示文件用于替换来自[示例 2-1](#example-2-1) 和[示例 2-4](#example-2-4) 定义的 `configuation.yml` 和 `route.yml`。
+不要求您明确创建一个 Service。Route 和 Configuration 可以被分开在不同的 YAML 文件（如[示例 2-1](#example-2-1) 和 [示例 2-4](#example-2-4)）。在这种情形下，您可以应用每个单独的对象到集群。然而，推荐的方式使用一个 Service 来编排 Route 和 Configuration。[示例 2-8](#example-2-8) 所示文件用于替换来自[示例 2-1](#example-2-1) 和[示例 2-4](#example-2-4) 定义的 `configuation.yml` 和 `route.yml`。
 
 <span id="example-2-8">*示例 2-8. knative-helloworld/service.yml* </span>
 
