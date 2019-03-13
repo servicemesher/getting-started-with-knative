@@ -3,7 +3,7 @@ owner: ["haiker2011"]
 reviewer: ["SataQiu", "shaobai", "junahan"]
 description: "本章是全书的第三章，主要介绍 Build (构建)的几个相关的组件，通过示例展示了如何进行配合来减少手动构建，更轻松的完成代码的打包和构建。"
 publishDate: 2019-03-04
-updateDate: 2019-03-11
+updateDate: 2019-03-13
 ---
 
 # Build（构建）
