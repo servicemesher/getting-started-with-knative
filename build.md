@@ -18,15 +18,15 @@ Knative 的 Serving（服务）组件是解决如何从容器到 URL 的，而 B
 
 > 封装可重复构建步骤集合并允许对构建进行参数化的模板。
 
-* Service Accounts
+* Service Account
 
 > 允许对私有资源(如 Git 存储库或容器镜像库)进行身份验证。
 
 > [备注] 在编写本文时，有一些活动的工作要迁移 [Build Pipelines（构建流水线）](https://github.com/knative/build-pipeline)，对构建中的流水线进行重构更类似于 CI/CD 流水线的 Knative。这意味着除了编译和打包代码外，Knative 中的构建还可以轻松地运行测试并发布这些结果。请密切关注 Knative 的未来版本，了解这一变化。
 
-## Service Accounts（服务账户）
+## Service Account（服务账户）
 
-在开始配置构建之前，你首先会面临一个紧迫的问题：如何在构建时获得需要验证的服务？如何从私有的 Git 仓库拉取代码和如何把容器镜像推到 Docker Hub 里面？为此，你可以利用两个 Kubernetes 原生组件的组合：Secrets 和 Service Accounts 。Secrets 可以让你安全地存储这些经过身份验证的请求所需的凭据，Service Accounts 可以让你灵活地为多个构建提供和维护凭据，而无需每次构建新应用程序时手动配置它们。
+在开始配置构建之前，你首先会面临一个紧迫的问题：如何在构建时获得需要验证的服务？如何从私有的 Git 仓库拉取代码和如何把容器镜像推到 Docker Hub 里面？为此，你可以利用两个 Kubernetes 原生组件的组合：Secret 和 Service Account 。Secret 可以让你安全地存储这些经过身份验证的请求所需的凭据，Service Account 可以让你灵活地为多个构建提供和维护凭据，而无需每次构建新应用程序时手动配置它们。
 
 在 [Example 3-1](#example-3-1) 中，首先创建一个 Secret ，命名为 `dockerhub-account`，里面包含需要使用的凭据。当然，可以像应用其他 YAML 一样应用它，如 [Example 3-2](#example-3-2) 所示。
 
