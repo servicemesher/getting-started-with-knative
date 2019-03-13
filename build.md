@@ -1,7 +1,7 @@
 ---
 owner: ["haiker2011"]
 reviewer: ["SataQiu", "shaobai", "junahan"]
-description: "本章是全书的第三章，主要介绍 Build (构建)的几个相关的组件，通过示例展示了如何进行配合来减少手动构建，更轻松的完成代码的打包和构建。"
+description: "本章是全书的第三章，主要介绍 Build （构建）的几个相关的组件，通过示例展示了如何进行配合来减少手动构建，更轻松的完成代码的打包和构建。"
 publishDate: 2019-03-04
 updateDate: 2019-03-13
 ---
@@ -117,7 +117,7 @@ ENTRYPOINT ./knative-build-demo
 EXPOSE 8080
 ```
 
-在前面的[第2章](serving.md)中，你已经在本地构建了容器并手动将其推送到容器镜像库。然而，Knative 为在 Kubernetes 集群中使用 Builds 来完成这些步骤提供了一种更好的方式。与 Configurations （配置）和 Routes（路由）一样，Builds 也可以简单地作为 Kubernetes 自定义资源(CRD)来通过 YAML 定义的方式实现。在深入研究每个组件之前，先来看一看 [Example 3-6](#example-3-6) ，看看 Build 的配置是什么样的。
+在前面的[第2章](serving.md)中，你已经在本地构建了容器并手动将其推送到容器镜像库。然而，Knative 为在 Kubernetes 集群中使用 Builds 来完成这些步骤提供了一种更好的方式。与 Configurations （配置）和 Routes（路由）一样，Builds 也可以简单地作为 Kubernetes 自定义资源（CRD）来通过 YAML 定义的方式实现。在深入研究每个组件之前，先来看一看 [Example 3-6](#example-3-6) ，看看 Build 的配置是什么样的。
 
 <span id="example-3-6">*Example 3-6. knative-build-demo/service.yaml*</span>
 
