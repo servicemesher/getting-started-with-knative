@@ -1,7 +1,7 @@
 ---
 owner: ["haiker2011"]
 reviewer: ["SataQiu", "shaobai", "junahan"]
-description: "本章是全书的第三章，主要介绍 Build (构建)的内容。"
+description: "本章是全书的第三章，主要介绍 Build (构建)的几个相关的组件，通过示例展示了如何进行配合来减少手动构建，更轻松的完成代码的打包和构建。"
 publishDate: 2019-03-04
 updateDate: 2019-03-11
 ---
@@ -242,6 +242,6 @@ Build Template 的 `steps` 部分具有与 Build 完全相同的语法，只是�
 
 ## 结论
 
-Knative 中的 Builds 在部署应用程序时删除了许多手动步骤。此外，Build Templates 提供了一些构建代码和删除手动管理组件数量的好方法。随着时间的推移，可能会有越来越多的 Build Templates 被构建并与Knative社区共享，这可能是最值得关注的事情之一。
+Knative 中的 Builds 在部署应用程序时删除了许多手动步骤。此外，Build Templates 提供了一些构建代码和删除手动管理组件数量的好方法。随着时间的推移，可能会有越来越多的 Build Templates 被构建并与 Knative 社区共享，这可能是最值得关注的事情之一。
 
 我们已经花了很多时间来构建和运行应用程序，但是 serverless 的最大承诺之一是，它可以使您的服务轻松地连接到事件源。在下一章中，将研究 Knative 的 Eventing（事件）组件以及开箱即用的所有可用事件源。
