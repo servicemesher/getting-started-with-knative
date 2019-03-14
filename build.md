@@ -55,7 +55,7 @@ kubectl apply -f knative-build-demo/secret.yaml
 
 首先要注意的是，`username` 和 `password` 在传递给 Kubernetes 时都是 base64 编码的。还注意到，使用 `basic-auth` 根据 Docker Hub 进行身份验证，这意味着将使用用户名和密码进行身份验证，而不是类似于 access token（访问令牌）的东西。此外，Knative 还附带了开箱即用的 `ssh-auth`，这允许使用 SSH 私钥从私有 Git 存储库中拉取代码。
 
-除了将 Secret 命名为 `dockerhub-account` 之外，还对 Secret 进行了注解。Annotations（注解）是说明连接到特定主机时使用哪些凭据的一种方式。在 [Example 3-3](#example-3-3) 中，定义了连接到 Docker Hub 时使用的基于身份的验证凭证集。
+除了将 Secret 命名为 `dockerhub-account` 之外，还对 Secret 进行了注解。Annotation（注解）是说明连接到特定主机时使用哪些凭据的一种方式。在 [Example 3-3](#example-3-3) 中，定义了连接到 Docker Hub 时使用的基于身份的验证凭证集。
 
 **我的凭据安全吗？**
 > 使用 base64 编码对凭证进行编码不是为了安全性，而是为了可靠地将这些字符串传输到其中 Kubernetes 。在后端，Kubernetes 提供了关于如何加密机密的更多选项。有关加密的详细资料 Secret，请参考 [Kubernetes 文档](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/) 。
