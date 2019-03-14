@@ -20,7 +20,7 @@ Knative 的 Serving（服务）组件是解决如何从容器到 URL 的，而 B
 
 * Service Account
 
-> 允许对私有资源(如 Git 存储库或容器镜像库)进行身份验证。
+> 允许对私有资源（如 Git 存储库或容器镜像库）进行身份验证。
 
 > [备注] 在编写本文时，有一些活动的工作要迁移 [Build Pipeline（构建流水线）](https://github.com/knative/build-pipeline)，对构建中的流水线进行重构更类似于 CI/CD 流水线的 Knative。这意味着除了编译和打包代码外，Knative 中的构建还可以轻松地运行测试并发布这些结果。请密切关注 Knative 的未来版本，了解这一变化。
 
@@ -81,7 +81,7 @@ secrets:
 
 <span id="example-3-4">*Example 3-4. knative-helloworld/app.go*</span>
 
-```golang
+```go
 package main
 
 import (
@@ -105,7 +105,7 @@ func main() {
 
 <span id="example-3-5">*Example 3-5. knative-helloworld/Dockerfle*</span>
 
-```dockerfile
+```docker
 FROM golang
 
 ADD . /knative-build-demo
@@ -149,14 +149,11 @@ spec:
 
 在构建步骤之前，你还会看到定义源代码位置的源代码部分。目前，Knative 发布了三个代码源选项：
 
-* git
-Git 仓库，可以选择使用参数来定义分支、标记或提交 SHA 。
+* git：Git 仓库，可以选择使用参数来定义分支、标记或提交 SHA 。
 
-* gcs
-位于谷歌云存储中的存档文件。
+* gcs：位于谷歌云存储中的存档文件。
 
-* 自定义
-任意容器镜像仓库。这允许用户编写自己的源代码，只要将源代码放在 `/work space` 目录中即可。
+* 自定义：任意容器镜像仓库。这允许用户编写自己的源代码，只要将源代码放在 `/work space` 目录中即可。
 
 只需要安装一个额外的组件，即 Build Template（构建模板）。将会在 “Build template” 一节中向你更深入地介绍这些内容，但是现在，先将继续使用在 YAML 中定义的方式，在本例中是 Kaniko Build Template 如 [Example 3-7](#example-3-7) 所示。
 
@@ -169,7 +166,7 @@ raw.githubusercontent.com/knative/build-templates/master/kaniko/kaniko.yaml
 
 通过应用模板，可以像在 Serving 示例中那样部署服务，配置如 [Example 3-8](#example-3-8) 所示。
 
-<span id="example-3-8">Example 3-8. Deploy our application*</span>
+<span id="example-3-8">*Example 3-8. Deploy our application*</span>
 
 ```bash
 kubectl apply -f knative-build-demo/service.yaml
