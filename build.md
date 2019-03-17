@@ -3,7 +3,7 @@ owner: ["haiker2011"]
 reviewer: ["SataQiu", "shaobai", "junahan", "rootsongjc"]
 description: "本章是全书的第三章，主要介绍 Build （构建）的几个相关的组件，通过示例展示了如何进行配合来减少手动构建，更轻松的完成代码的打包和构建。"
 publishDate: 2019-03-04
-updateDate: 2019-03-14
+updateDate: 2019-03-17
 ---
 
 # Build（构建）
@@ -103,7 +103,7 @@ func main() {
 
 然后编写一个 Dockerfile 来构建代码和容器，如 [Example 3-5](#example-3-5) 所示。
 
-<span id="example-3-5">*Example 3-5. knative-helloworld/Dockerfle*</span>
+<span id="example-3-5">*Example 3-5. knative-helloworld/Dockerfile*</span>
 
 ```docker
 FROM golang
