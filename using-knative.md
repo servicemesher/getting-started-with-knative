@@ -1,6 +1,6 @@
 ---
 owner: [loverto]
-reviewer: ["haiker2011","SataQiu","dreadbird"]
+reviewer: ["haiker2011","SataQiu","dreadbird","rootsongjc"]
 description: "本章讲述了使用 knative 的高级用例"
 publishDate: 2019-3-3
 updateDate: 2019-4-3
