@@ -74,14 +74,12 @@ spec:
 
 在此创建和运行 Knative Services ,除了代码和容器注册表的路由之外，与示例3-6中的 Kaniko 构建的唯一不同之处在于模板的名称已从 kaniko 更改为 buildpack。
 
-![指数52_1.png](https://ws1.sinaimg.cn/large/61411417ly1g0pw1ph83cj20sg0sg4co.jpg)
-
 例如，git 存储库是 Node.js 应用程序 hello.js，以及定义应用程序的依赖关系和元数据的 package.json 文件。在这种情况下，Build Template 将下载 Node 运行时和 npm 可执行文件，运行`npm install`，最后构建容器并将其推送到 Docker Hub。
 
 您可能发现已应用了大量 YAML 文件，并且不确定是否已创建所有的 Knative 对象。有一个命令方便你确认这些问题，命令如下所示：
 
 ```bash
-kubectl get knative -n {NAMESPACE} 
+kubectl get knative -n {NAMESPACE}
 ```
 
 返回给定命名空间中所有的 Knative 对象列表。
