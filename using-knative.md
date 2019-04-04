@@ -34,9 +34,7 @@ Knative Services 仅依赖 Serving 组件。Build 模块不需要在 Knative 中
 
 考虑您的软件开发生命周期的过程是非常重要的。您是否有一个现有的，成熟的构建流水线来生成容器镜像并将它们推送到 registry 仓库？如果是这样，您可能不需要 Knative Build 为您工作。如果没有，在 Knative Service 中定义 Build 方法可能会使事情变得更容易。
 
-具体使用哪个构建模板还需要依据您希望如何打包代码和依赖项而定。对于使用既定流程管理 Dockerfile 的 Docker 重度使用者而言，Kaniko 是一个很好的选择。而 Cloud Foundry 的用户或开发者们
-
-如果只喜欢编写代码并且不太关心基础设施会选择 Buildpack Build Template。经验丰富的 Java 用户可能已经熟悉使用 Jib 来构建 Java 容器，这使得它成为正确的选择。无论您的过程如何，Knative 都会提供一些不错的抽象，同时允许您选择最适合您的方法。
+具体使用哪个构建模板还需要依据您希望如何打包代码和依赖项而定。对于使用既定流程管理 Dockerfile 的 Docker 重度使用者而言，Kaniko 是一个很好的选择。而 Cloud Foundry 的用户或开发者们只喜欢编写代码并且不太关心基础设施那么 Buildpack Build Template 会是更好的选择。经验丰富的 Java 用户可能已经熟悉使用 Jib 来构建 Java 容器，这使得它成为正确的选择。无论您的过程如何，Knative 都会提供一些不错的抽象，同时允许您选择最适合您的方法。
 
 在 Knative 中，Buildpack 构建模板将使用 Cloud Foundry 的相同构建包，包括自动检测要应用于代码的构建包。如果您参考[例6\-1](#example-6-1)
 
@@ -44,7 +42,7 @@ Knative Services 仅依赖 Serving 组件。Build 模块不需要在 Knative 中
 
 相反，构建模板知道如何为此应用程序构建容器。
 
-#### 例6-1.`knative-buildpack-demo/service.yaml`{#example-6-1}
+#### 例6-1 `knative-buildpack-demo/service.yaml`{#example-6-1}
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -100,7 +98,7 @@ Knative 还提供不同的部署方法，具体取决于最适合您服务的方
 
 [例6\-2](#example-6-2) 重新审视了[ 第 2 章中](/serving.md)的 Route 定义。
 
-#### 例6\-2。所有流量都将路由到 00001 修订版{#example-6-2}
+#### 例6\-2所有流量都将路由到 00001 修订版{#example-6-2}
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -120,7 +118,7 @@ spec:
 但是，在开始向应用程序发送生产流量之前，我们希望确保它正常运行。
 [在例6\-3](#example-6-3)中有一个名为 v2 的新路由，但没有路由到它的生产流量。
 
-#### 例6\-3。我们的新版本{#example-6-3} 
+#### 例6\-3 我们的新版本{#example-6-3} 
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -140,7 +138,7 @@ spec:
 
 这些修订版已命名为 v1 和 v2（尽管您可以选择任何名称，例如蓝和绿）。这意味着您可以在 `v2.knative-helloworld.default` 访问新版本。example.com 路由仍然只会将流量发送到 00001 修订版。在更改流量之前，请访问新版本并对其进行测试以确保它已准备好用于生产流量。当新版本准备好接收生产流量时，请再次更新路由，如[例6\-4所示](#example-6-4)。
 
-#### 例6\-4。将所有实时流量发送到我们的新版本{#example-6-4}
+#### 例6\-4 将所有实时流量发送到我们的新版本{#example-6-4}
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -163,7 +161,7 @@ Knative Routes 支持的另一种部署模式是逐步部署新版本的代码�
 
 虽然类似于蓝绿部署示例 [6\-4，你可以在例6\-5中看到](#example-6-5) 而不是路由0% 对于 v2的流量，我们在 v1和 v2上均匀分配负载。您也可以选择使用`80-20`之类的其他拆分，甚至可以拆分三个修订版。每个修订版仍可通过指定的子域访问，但用户流量将按百分比值进行拆分。
 
-#### 例6\-5。部分负载路由{#example-6-5}
+#### 例6\-5 部分负载路由{#example-6-5}
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -189,7 +187,7 @@ spec:
 
 使用 `knative-custom-domain` 示例作为[示例6\-6](#example-6-6)中显示的起始位置，默认情况下它接收 `knative-custom-domain.default.example.com` 的 Route。
 
-#### 例6\-6。 `knative-custom-domain/configuration.yaml`{#example-6-6}
+#### 例6\-6 `knative-custom-domain/configuration.yaml`{#example-6-6}
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -207,7 +205,7 @@ spec:
 
 由于我们已将此定义为配置而非服务，因此我们还需要为应用程序定义路由，如[例6\-7](#example-6-7)。将这两种配置分开将为我们提供更高级别的定制，例如我们在讨论零停机部署时所说的那些定制，但也将让我们更新我们的域和路由，而无需重新部署整个应用程序。
 
-#### 例6\-7。`knative-custom-domain/route.yaml`{#example-6-7}
+#### 例6\-7 `knative-custom-domain/route.yaml`{#example-6-7}
  
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -224,7 +222,7 @@ spec:
 
 正如预期的那样，这将创建一个服务并在 `knative-custom-domain.default.example.com` 上创建一个 Route。现在来看看如何将默认 URL 方案中的域名从 example.com 更改为您实际可以路由到的域名。此示例使用本书的网站 `dev.gswkbook.com` 的子域。这可以通过更新配置域 ConfigMap 轻松完成，该配置域由 Knative 的默认配置，[如例 6\-8](#example-6-8) 所示。
 
-#### 例6\-8。`knative-custom-domain/domain.yaml`{#example-6-8}
+#### 例6\-8 `knative-custom-domain/domain.yaml`{#example-6-8}
 
 ```yaml
 apiVersion: v1
@@ -269,7 +267,7 @@ status:
 
 [例6\-10。](#example-6-10)
 
-#### 例6\-10。`knative-custom-domain/domain.yaml`{#example-6-10}
+#### 例6\-10 `knative-custom-domain/domain.yaml`{#example-6-10}
 
 ```yaml
 apiVersion: v1
@@ -284,9 +282,9 @@ data:
   dev.gswkbook.com: ""
 ```
 
-在[例 6\-11](#example-6-11) 中，我们已经定义了具有 `environment: prod` 标签的 Route 将被放置在 `prod.gswkbook.com`  域上，否则它将默认置在 `dev.gswkbook.com` 域中。您需要做的就是将应用程序移动到这个新域，然后在配置的元数据部分中使用这个新标签更新您的 Route。
+在[例 6\-11](#example-6-11) 中，我们已经定义了具有 `environment: prod` 标签的 Route 将被放置在 `prod.gswkbook.com`  域上，否则它将默认放置在 `dev.gswkbook.com` 域中。您需要做的就是将应用程序移动到这个新域，然后在配置的元数据部分中使用这个新标签更新您的 Route。
 
-#### 例6\-11。`knative-custom-domain/route-label.yaml`{#example-6-11}
+#### 例6\-11 `knative-custom-domain/route-label.yaml`{#example-6-11}
  
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -309,7 +307,7 @@ spec:
 kubectl describe route knative-custom-domain
 ```
 
-#### 例6\-12。`knative-custom-domain` 路由{#example-6-12}
+#### 例6\-12 `knative-custom-domain` 路由{#example-6-12}
 
 ```yaml
 description Name:         knative-custom-domain
@@ -339,7 +337,7 @@ Knative 通过使用 ContainerSource 轻松创建自己的事件源来解决这�
 
 让我们看看它是如何工作的，通过构建一个事件源，它将在给定的时间间隔内发出当前时间，称为[时间事件源](http://bit.ly/2SSpX80)。首先，让我们看看事件源的代码[例 6\-13](#example-6-13)。
 
-#### 例6\-13。`time-event-source/app.rb`{#example-6-13}
+#### 例6\-13 `time-event-source/app.rb`{#example-6-13}
 
 ```ruby
 require 'optparse'
@@ -375,7 +373,7 @@ end
 
 解析 CLI 标志后，这个 Ruby 应用程序进入一个死循环，不断地将当前时间 POST 到由 `--sink` 标志提供的 URL，然后根据 `--interval` 标志提供的秒数休眠。由于这需要打包为容器，我们还有一个用于构建它的 Dockerfile，如[例 6\-14](#example-6-14) 所示。
 
-#### 例6\-14。`time-event-source/Dockerfile`{#example-6-14}
+#### 例6\-14 `time-event-source/Dockerfile`{#example-6-14}
 
 ```Dockerfile
 FROM ruby:2.5.3-alpine3.8
@@ -386,7 +384,7 @@ ENTRYPOINT ["ruby", "app.rb"]
 
 这里并不奇怪。我们使用官方 Ruby 镜像作为基础，添加我们的代码，并定义如何运行我们的代码。我们可以构建我们的容器并将其发送到 Docker Hub。在我们运行事件源之前，我们需要一个发送事件的地方。我们已经开始构建一个非常简单的 Knative 应用程序，它记录了所有它收到的 HTTP POST 的主体请求。
 
-#### 例6\-15。`time-event-source/service.yaml`{#example-6-15}
+#### 例6\-15 `time-event-source/service.yaml`{#example-6-15}
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -410,7 +408,7 @@ kubectl apply -f service.yaml
 
 剩下的就是让我们的事件源在 Knative 中运行。YAML 与其他事件源的概述相同，我们在[例 6\-16](#example-6-16) 中可以看到。
 
-#### 例6\-16。`time-event-source/source.yaml`{#example-6-16}
+#### 例6\-16 `time-event-source/source.yaml`{#example-6-16}
 
 ```yaml
 apiVersion: sources.eventing.knative.dev/v1alpha1
@@ -447,7 +445,7 @@ kubectl apply -f source.yaml
 
 很快，我们会看到一个新的 Pod 被创建出来，但重要的区别在于它将永久运行而不会降低到零个。我们可以查看记录器务的日志，以验证我们的事件是否符合预期，如[例 6\-17](#example-6-17) 所示。
 
-#### 例6\-17。从我们的记录器中检索日志服务{#example-6-17}
+#### 例6\-17 从我们的记录器中检索日志服务{#example-6-17}
 
 ```bash
 $ kubectl get pods -l app = logger-00001 -o name pod/logger-00001-deployment-57446ffb59-vzg97
