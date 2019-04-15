@@ -3,7 +3,7 @@ owner: [loverto]
 reviewer: ["haiker2011","SataQiu","dreadbird","rootsongjc"]
 description: "本章讲述了使用 knative 的高级用例"
 publishDate: 2019-3-3
-updateDate: 2019-4-3
+updateDate: 2019-4-15
 ---
 
 # 使用 Knative
@@ -41,8 +41,8 @@ Knative Services 仅依赖 Serving 组件。Build 模块不需要在 Knative 中
 你会看到很像 Kaniko Buildpack，你只能定义代码的位置以及推送容器镜像的位置。最大的区别是没必要提供 Dockerfile。
 
 相反，构建模板知道如何为此应用程序构建容器。
-
-#### 例6-1 `knative-buildpack-demo/service.yaml`{#example-6-1}
+<span id="example-6-1"></span>
+#### 例6-1 knative-buildpack-demo/service.yaml
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -97,8 +97,8 @@ Knative 还提供不同的部署方法，具体取决于最适合您服务的方
 在[第 2 章](/serving.md)中，您了解了如何将单个路由指向多个修订版以及如何实现零停机部署。由于修订是不可变的，并且可以同时运行多个版本，因此可以在为旧版本提供流量时调出新版本。然后，一旦准备好将流量引导到新版本，请立即更新路由切换。这有时被称为蓝绿部署，蓝和绿代表不同的版本。
 
 [例6\-2](#example-6-2) 重新审视了[ 第 2 章中](/serving.md)的 Route 定义。
-
-#### 例6\-2所有流量都将路由到 00001 修订版{#example-6-2}
+<span id="example-6-2"></span>
+#### 例6\-2所有流量都将路由到 00001 修订版
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -117,8 +117,8 @@ spec:
 
 但是，在开始向应用程序发送生产流量之前，我们希望确保它正常运行。
 [在例6\-3](#example-6-3)中有一个名为 v2 的新路由，但没有路由到它的生产流量。
-
-#### 例6\-3 我们的新版本{#example-6-3} 
+<span id="example-6-3"></span>
+#### 例6\-3 我们的新版本
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -137,8 +137,8 @@ spec:
 ```
 
 这些修订版已命名为 v1 和 v2（尽管您可以选择任何名称，例如蓝和绿）。这意味着您可以在 `v2.knative-helloworld.default` 访问新版本。example.com 路由仍然只会将流量发送到 00001 修订版。在更改流量之前，请访问新版本并对其进行测试以确保它已准备好用于生产流量。当新版本准备好接收生产流量时，请再次更新路由，如[例6\-4所示](#example-6-4)。
-
-#### 例6\-4 将所有实时流量发送到我们的新版本{#example-6-4}
+<span id="example-6-4"></span>
+#### 例6\-4 将所有实时流量发送到我们的新版本
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -159,9 +159,9 @@ spec:
 
 Knative Routes 支持的另一种部署模式是逐步部署新版本的代码。这可以用于 AB 测试，或者在为每个用户释放功能之前将功能推广到用户子集。在 Knative 中，这是通过使用基于百分比的路由来实现的。
 
-虽然类似于蓝绿部署示例 [6\-4，你可以在例6\-5中看到](#example-6-5) 而不是路由0% 对于 v2的流量，我们在 v1和 v2上均匀分配负载。您也可以选择使用`80-20`之类的其他拆分，甚至可以拆分三个修订版。每个修订版仍可通过指定的子域访问，但用户流量将按百分比值进行拆分。
-
-#### 例6\-5 部分负载路由{#example-6-5}
+虽然类似于蓝绿部署示例 [6\-4](#example-6-4)，你可以在例[6\-5](#example-6-5)中看到 而不是路由0% 对于 v2的流量，我们在 v1和 v2上均匀分配负载。您也可以选择使用`80-20`之类的其他拆分，甚至可以拆分三个修订版。每个修订版仍可通过指定的子域访问，但用户流量将按百分比值进行拆分。
+<span id="example-6-5"></span>
+#### 例6\-5 部分负载路由
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -186,8 +186,8 @@ spec:
 这不是用于生产应用程序的 URL。不仅如此，还不可能路由到 example.com。值得庆幸的是，Knative 提供了使用自定义域的选项。开箱即用，Knative 为每个 Route 使用{route}.{namespace}.{domain}方案，并为 example.com 使用默认域。
 
 使用 `knative-custom-domain` 示例作为[示例6\-6](#example-6-6)中显示的起始位置，默认情况下它接收 `knative-custom-domain.default.example.com` 的 Route。
-
-#### 例6\-6 `knative-custom-domain/configuration.yaml`{#example-6-6}
+<span id="example-6-6"></span>
+#### 例6\-6 `knative-custom-domain/configuration.yaml`
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -204,9 +204,9 @@ spec:
 ```
 
 由于我们已将此定义为配置而非服务，因此我们还需要为应用程序定义路由，如[例6\-7](#example-6-7)。将这两种配置分开将为我们提供更高级别的定制，例如我们在讨论零停机部署时所说的那些定制，但也将让我们更新我们的域和路由，而无需重新部署整个应用程序。
+<span id="example-6-7"></span>
+#### 例6\-7 `knative-custom-domain/route.yaml`
 
-#### 例6\-7 `knative-custom-domain/route.yaml`{#example-6-7}
- 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
 kind: Route
@@ -221,8 +221,8 @@ spec:
 ```
 
 正如预期的那样，这将创建一个服务并在 `knative-custom-domain.default.example.com` 上创建一个 Route。现在来看看如何将默认 URL 方案中的域名从 example.com 更改为您实际可以路由到的域名。此示例使用本书的网站 `dev.gswkbook.com` 的子域。这可以通过更新配置域 ConfigMap 轻松完成，该配置域由 Knative 的默认配置，[如例 6\-8](#example-6-8) 所示。
-
-#### 例6\-8 `knative-custom-domain/domain.yaml`{#example-6-8}
+<span id="example-6-8"></span>
+#### 例6\-8 `knative-custom-domain/domain.yaml`
 
 ```yaml
 apiVersion: v1
@@ -245,7 +245,7 @@ $ kubectl apply -f route.yaml
 看一下更改后的路由，您会看到它现在已获得 `knative-custom-domain.default.dev` 的更新网址。
 
 `gswkbook.com`。如果您的入口网关可公开访问（即，在 Google 的 GKE 或类似的托管 Kubernetes 产品上设置），您可以为 `*.dev.gswkbook.com` 创建一个通配符 DNS 条目， 以便路由到您的 Knative 安装并访问您的服务和功能直接通过互联网，如[例 6\-9](#example-6-9) 所示。
-
+<span id="example-6-9"></span>
 ```bash
 $ kubectl get route knative-custom-domain -o yaml
 
@@ -263,11 +263,9 @@ status:
     revisionName: knative-custom-domain-00001
 ```
 
-您可能还希望为不同的部署设置不同的域。例如，默认情况下，您可能希望将所有内容部署到开发域，然后在测试后将其转发到生产域。Knative 提供了一种简单的启用此功能的机制，允许您定义多个域并标记路由以确定它们所在的域。让我们再次更新 `config-domain` ConfigMap，设置另一个用于生产的域名 `*.prod.gswkbook.com`，如图所示
-
-[例6\-10。](#example-6-10)
-
-#### 例6\-10 `knative-custom-domain/domain.yaml`{#example-6-10}
+您可能还希望为不同的部署设置不同的域。例如，默认情况下，您可能希望将所有内容部署到开发域，然后在测试后将其转发到生产域。Knative 提供了一种简单的启用此功能的机制，允许您定义多个域并标记路由以确定它们所在的域。让我们再次更新 `config-domain` ConfigMap，设置另一个用于生产的域名 `*.prod.gswkbook.com`，如图所示[例6\-10](#example-6-10)
+<span id="example-6-10"></span>
+#### 例6\-10 `knative-custom-domain/domain.yaml`
 
 ```yaml
 apiVersion: v1
@@ -285,7 +283,7 @@ data:
 在[例 6\-11](#example-6-11) 中，我们已经定义了具有 `environment: prod` 标签的 Route 将被放置在 `prod.gswkbook.com`  域上，否则它将默认放置在 `dev.gswkbook.com` 域中。您需要做的就是将应用程序移动到这个新域，然后在配置的元数据部分中使用这个新标签更新您的 Route。
 
 #### 例6\-11 `knative-custom-domain/route-label.yaml`{#example-6-11}
- 
+
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
 kind: Route
@@ -306,8 +304,8 @@ spec:
 ```bash
 kubectl describe route knative-custom-domain
 ```
-
-#### 例6\-12 `knative-custom-domain` 路由{#example-6-12}
+<span id="example-6-12"></span>
+#### 例6\-12 `knative-custom-domain` 路由
 
 ```yaml
 description Name:         knative-custom-domain
@@ -336,8 +334,8 @@ Knative 通过使用 ContainerSource 轻松创建自己的事件源来解决这�
 2.它希望接收一个 `--sink` CLI 标志，Knative 将提供一个指向已配置目标的 URL。
 
 让我们看看它是如何工作的，通过构建一个事件源，它将在给定的时间间隔内发出当前时间，称为[时间事件源](http://bit.ly/2SSpX80)。首先，让我们看看事件源的代码[例 6\-13](#example-6-13)。
-
-#### 例6\-13 `time-event-source/app.rb`{#example-6-13}
+<span id="example-6-13"></span>
+#### 例6\-13 `time-event-source/app.rb`
 
 ```ruby
 require 'optparse'
@@ -372,8 +370,8 @@ end
 ```
 
 解析 CLI 标志后，这个 Ruby 应用程序进入一个死循环，不断地将当前时间 POST 到由 `--sink` 标志提供的 URL，然后根据 `--interval` 标志提供的秒数休眠。由于这需要打包为容器，我们还有一个用于构建它的 Dockerfile，如[例 6\-14](#example-6-14) 所示。
-
-#### 例6\-14 `time-event-source/Dockerfile`{#example-6-14}
+<span id="example-6-14"></span>
+#### 例6\-14 `time-event-source/Dockerfile`
 
 ```Dockerfile
 FROM ruby:2.5.3-alpine3.8
@@ -383,8 +381,8 @@ ENTRYPOINT ["ruby", "app.rb"]
 ```
 
 这里并不奇怪。我们使用官方 Ruby 镜像作为基础，添加我们的代码，并定义如何运行我们的代码。我们可以构建我们的容器并将其发送到 Docker Hub。在我们运行事件源之前，我们需要一个发送事件的地方。我们已经开始构建一个非常简单的 Knative 应用程序，它记录了所有它收到的 HTTP POST 的主体请求。
-
-#### 例6\-15 `time-event-source/service.yaml`{#example-6-15}
+<span id="example-6-15"></span>
+#### 例6\-15 `time-event-source/service.yaml`
 
 ```yaml
 apiVersion: serving.knative.dev/v1alpha1
@@ -407,8 +405,8 @@ kubectl apply -f service.yaml
 ```
 
 剩下的就是让我们的事件源在 Knative 中运行。YAML 与其他事件源的概述相同，我们在[例 6\-16](#example-6-16) 中可以看到。
-
-#### 例6\-16 `time-event-source/source.yaml`{#example-6-16}
+<span id="example-6-16"></span>
+#### 例6\-16 `time-event-source/source.yaml`
 
 ```yaml
 apiVersion: sources.eventing.knative.dev/v1alpha1
@@ -444,8 +442,8 @@ kubectl apply -f source.yaml
 ```
 
 很快，我们会看到一个新的 Pod 被创建出来，但重要的区别在于它将永久运行而不会降低到零个。我们可以查看记录器务的日志，以验证我们的事件是否符合预期，如[例 6\-17](#example-6-17) 所示。
-
-#### 例6\-17 从我们的记录器中检索日志服务{#example-6-17}
+<span id="example-6-17"></span>
+#### 例6\-17 从我们的记录器中检索日志服务
 
 ```bash
 $ kubectl get pods -l app = logger-00001 -o name pod/logger-00001-deployment-57446ffb59-vzg97
