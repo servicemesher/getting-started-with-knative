@@ -14,7 +14,8 @@ updateDate: 2019-04-15
 
 通过第 2 章中的 Hello World 示例，可以看出将现存的镜像从容器仓库部署到 Knative 是非常容易的。第 3 章中的 Kaniko 示例以及示例 6-1 中的 Buildpack 方式演示了如何为 Knative 构建和部署简单的 12-factor 应用程序。到目前为止，这些例子都集中在作为软件单元的容器或应用程序上。现在回想一下第 1 章中提及函数（functions），试想将一个函数部署到 Knative 是什么样的？答案是它看起来几乎与容器和应用程序一样。是因为有了 Build 模块，Knative 可以将您的函数（function）代码转换为容器，其方式与任何应用程序代码相似。
 
->什么是函数（Function）
+>什么是函数（Function）?
+>
 >应用程序由代码组成，函数（Function）也是如此。那么函数（Function）有什么特别之处呢？难道它不是一个应用程序吗？应用程序一般由从前端 UI 到后端数据库的许多组件以及其间的所有处理组成。相比之下，函数通常只是一小段代码，具有单一目的，可以快速和异步地运行。它通常也由事件触发，而不是由用户在请求/响应场景中直接调用。
 
 回想一下第 6 章中的 Cloud Foundry Buildpacks 示例。例 6-1 中显示的 service.yaml 文件引用了一个完整的 Node.js Express 应用程序，该应用程序的功能是在给定端口上侦听 GET 请求然后返回 “Hello World” 信息。如果我们的程序是接受数字作为输入，返回该数字的平方作为结果的函数，而不是 Hello World 应用程序呢？此代码可能类似于我们在示例 8-1 中看到的内容。
@@ -41,7 +42,6 @@ var port = 8080;
 app.listen(port, function () {
     console.log('Listening on port',  port);
 });
-
 ```
 
 我们可以使用示例 6-1 中的相同 Buildpack 来构建此函数并将其部署到 Knative。又如例 8-2，它也是使用 Node.js 编写的一个函数，它不是一个完整的 Express 应用程序，而仅仅由一个函数组成，不包含任何其他 Node.js 模块。

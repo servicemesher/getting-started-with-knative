@@ -15,9 +15,10 @@ updateDate: 2019-03-12
 Serving 模块定义一组特定的对象以控制所有功能：Revision（修订版本）、Configuration （配置）、Route（路由）和 Service（服务）。Knative 使用 Kubernetes CRD（自定义资源）的方式实现这些 Kubernetes 对象。下图 2-1 展示所有 Serving 组件对象模型间的关系。在接下去的章节将具体介绍每个部分。
 
 <div align="center">
-<img src="https://ws1.sinaimg.cn/large/006tKfTcly1g0yrpiumcqj31230u0jxo.jpg" alt="Serving Object Model"/>
+<img src="images/006tKfTcly1g0yrpiumcqj31230u0jxo.jpg" alt="Serving Object Model"/>
 图 2-1: Knative Serving 对象模型
 </div>
+
 
 ## Configuration（配置）和 Revision（修订版本）
 Knative Serving 始于 Configuration。您可以在 Configuration 中为部署定义所需的状态。最小化 Configuration 至少包括一个配置名称和一个要部署容器镜像的引用。在 Knative 中，定义的引用为 Revision。Revision 代表一个不变的，某一时刻的代码和 Configuration 的快照。每个 Revision 引用一个特定的容器镜像和运行它所需要的任何特定对象（例如环境变量和卷）。然而，您不必显式创建 Revision。由于 Revision 是不变的，它们从不会被改变和删除，相反，当您修改 Configuration 的时候，Knative 会创建一个 Revision。这允许一个 Configuration 既反映工作负载的当前状态，同时也维护一个它自己的历史 Revision 列表。
@@ -240,7 +241,7 @@ Containers:
 
 例如，一个 Revision 每秒收到 350 个请求并且每次请求大约需要处理 0.5 秒。使用默认设置 (每 Pod 100 个并发请求)，这个 Revision 将扩展至两个 Pod：
 
-```
+```bash
 350 * .5 = 175
 175 / 100 = 1.75
 ceil(1.75) = 2 pods
@@ -260,9 +261,10 @@ Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接�
 <span id="fingure-2-2">*图 2-2 显示 Autoscaler 和 Activator 如何和 Routes 及 Revisions 协同工作。*</span>
 
 <div align="center">
-<img src="https://ws2.sinaimg.cn/large/006tKfTcly1g0yrmo1t2cj31z70u0afi.jpg" alt="Autoscaler and Activator with Route and Revision" />
+<img src="images/006tKfTcly1g0yrmo1t2cj31z70u0afi.jpg" alt="Autoscaler and Activator with Route and Revision" />
 图 2-2: Autoscaler 和 Activator 如何和 Routes 及 Revisions 互动。
 </div>
+
 
 > **WARN**
 >

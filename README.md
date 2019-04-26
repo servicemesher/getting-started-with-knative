@@ -1,6 +1,8 @@
-# Getting Started with Knative《Knative 入门中文版》
+# Knative入门——构建基于 Kubernetes 的现代化Serverless应用
 
- <img src="cover.jpg" width="50%" height="50%">
+**本书是 Getting Started with Knative - Building Modern Serverless Workloads on Kubernetes 的中文版，由 [ServiceMesher 社区](http://www.servicemesher.com)翻译。**
+
+<img src="cover.jpg" width="50%" height="50%">
 
 ## 关于本书
 
@@ -40,4 +42,4 @@ Github：<https://github.com/servicemesher/getting-started-with-knative/>
 
 **[ServiceMesher 社区](http://www.servicemesher.com)出于学习和技术交流的目的将本书翻译成中文版，如有侵权将立即删除。**
 
-![ServiceMesher](https://ws1.sinaimg.cn/large/006tKfTcly1g0cz6429t2j31jt0beq9s.jpg)
+![ServiceMesher](images/006tKfTcly1g0cz6429t2j31jt0beq9s.jpg)
