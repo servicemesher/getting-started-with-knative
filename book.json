@@ -1,7 +1,7 @@
 ﻿{
   "title": "Knative 入门中文版",
   "gitbook": ">=3.2.0",
-  "description": "Knative 入门中文版，ServiceMesher 社区",
+  "description": "Knative 入门中文版 by ServiceMesher 社区",
   "language": "zh-hans",
   "author": "ServiceMesher",
   "links": {
@@ -56,7 +56,7 @@
         "token": "154337f0d95f0b110f98c1d5d7038895"
      },
     "tbfed-pagefooter": {
-    "copyright": "Copyright © ServiceMesher 2019",
+    "copyright": "Copyright © <a href=http://www.servicemesher.com>servicemesher.com</a> 2017-2019",
     "modify_label": " 最后更新于 ",
     "modify_format": "YYYY-MM-DD HH:mm:ss"
     },
