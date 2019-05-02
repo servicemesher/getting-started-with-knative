@@ -10,7 +10,7 @@ updateDate: 2019-05-02
 
 还有越来越多的的项目持续的加入到年轻的 Knative 生态系统。有些已经将其他现有的开源无服务器架构（serverless）的框架带到 Knative 上。例如，Kwsk 就是努力用 Knative 来代替大部分 Apache OpenWhisk 基础服务器组件。其他开源的无服务器架构项目专门针对 Knative 而构建，甚至帮助完善 Knative 上游体系。例如，riff 项目已经提供了一组工具来帮助简化构建函数（Function）和使用 Knative。本章将简要介绍使用 riff 项目团队的一些工具在 Knative 上构建和运行函数。
 
-## 使用 riff 项目打包函数（Functions）
+## 使用 riff 项目打包函数
 
 通过第 2 章中的 Hello World 示例，可以看出将现存的镜像从容器仓库部署到 Knative 是非常容易的。第 3 章中的 Kaniko 示例以及示例 6-1 中的 Buildpack 方式演示了如何为 Knative 构建和部署简单的十二要素（12-factor）应用程序。到目前为止，这些例子都集中在作为软件单元的容器或应用程序之上。现在回想一下第 1 章中提及函数，试想将一个函数部署到 Knative 是什么样的？答案是它看起来几乎与容器和应用程序一样。是因为有了 Build 模块，Knative 可以将您的函数代码转换为容器，其方式与应用程序代码相似。
 
