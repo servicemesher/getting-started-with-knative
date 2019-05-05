@@ -2,13 +2,13 @@
 owner: ["eportzxp"]
 reviewer: ["haiker2011","SataQiu","rootsongjc"]
 description: "通过一个可视化地展示世界各地的地震活动的演练，将前几章所学知识进行了一个串联。存在问题: 原文中 bit.ly 链接无法打开，前端容器镜像也无法访问到。"
-publishDate: 2019-04-19
-updateDate: 2019-04-19
+publishDate: 2019-05-04
+updateDate: 2019-05-04
 ---
 
 # 演练
 
-让我们把我们所学的一切运用起来去创造一些东西吧!我们进行一个演练，它利用了您前面所学到的许多知识，并通过使用[美国地质勘探局 (USGS) 地震数据源](https://on.doi.gov/2GmDWNB)的数据提供了一个服务，以可视化地展示世界各地的地震活动。您可以在 GitHub 存储库 [gswk/earthquakedemo](https://github.com/gswk/earthquake-demo) 中找到我们将要介绍的代码。
+让我们把所学的知识运用起来来创造一个项目吧！我们进行一个演练，它利用了前面所学到的许多知识，并通过使用[美国地质勘探局 (USGS) 地震数据源](https://on.doi.gov/2GmDWNB)的数据提供了一个服务，以可视化地展示世界各地的地震活动。您可以在 GitHub 存储库 [gswk/earthquakedemo](https://github.com/gswk/earthquake-demo) 上找到我们将要介绍的代码。
 
 ## 架构
 
@@ -24,16 +24,16 @@ updateDate: 2019-04-19
 
 **Geocoder 服务**
 
-这将为事件源提供 POST 事件的节点，并使用提供的坐标查找地址。它还将作为前端用来查询和检索最近的事件的节点。我们将使用 Build 服务来构建容器镜像。与运行在 Kubernetes 上的 Postgres 数据库通信。
+这将为事件源提供 POST 事件的节点，并使用提供的坐标查找地址。它还将作为前端用来查询和检索最近的事件的节点。我们将使用 Build 服务来构建容器镜像，与运行在 Kubernetes 上的 Postgres 数据库通信。
 
 **前端**
 
-一个可以可视化最近的地震活动的轻量级的、持续运行的前端
+一个可以可视化最近的地震活动的轻量级的、持续运行的前端。
 
-我们可以使用 [Helm](https://helm.sh) 在 Kubernetes 集群上轻松地搭建起 Postgres 数据库，Helm 是一个可以轻松地在 Kubernetes 上打包和共享应用程序包的工具。关于如何在你的 Kubernetes 集群上启动和运行的介绍，请务必参考 Helm 的文档。如果您运行在 Minikube 或没有任何特定的权限要求的 Kubernetes 集群上，那么您可以使用以下简单的命令来设置 Helm:
+我们可以使用 [Helm](https://helm.sh) 在 Kubernetes 集群上轻松地搭建起 Postgres 数据库，Helm 是一个可以轻松地在 Kubernetes 上打包和共享应用程序包的工具。关于如何在您的 Kubernetes 集群上启动和运行的介绍，请务必参考 Helm 的文档。如果您运行在 Minikube 或没有任何特定的权限要求的 Kubernetes 集群上，那么您可以使用以下简单的命令来设置 Helm:
     `$ helm init`
 
-对于像谷歌的 GCP 这样具有更深层安全配置的集群，请参考 [Helm Quickstart 指南](https://helm.sh/docs/using_helm/#quickstart)。接下来我们可以设置一个 Postgres 数据库并且传递一些配置参数以使设置更容易:
+对于像谷歌的 GCP 这样具有更深层安全配置的集群，请参考 [Helm Quickstart 指南](https://helm.sh/docs/using_helm/#quickstart)。接下来我们可以设置一个 Postgres 数据库并且传递一些配置参数以使设置更容易：
 
 ```bash
 $ helm install
@@ -193,7 +193,7 @@ name: in-memory-channel
 
 `kubectl apply -f earthquake-demo/channel.yaml`
 
-正如我们在第6章中构建自定义事件源一样，我们的这个事件源也是由一个脚本构成，在本例中是一个 ruby 脚本，它接受两个命令行标志位: --sink 和 --interval。让我们在 [示例7-4](#example-7-4)中看看这个。
+正如我们在第6章中构建自定义事件源一样，我们的这个事件源也是由一个脚本构成，在本例中是一个 ruby 脚本，它接受两个命令行标志位: --sink 和 --interval。让我们在 [示例7-4](#example-7-4)中看看它。
 
 *<span id="example-7-4">示例 7-4. usgs-event-source/usgs-event-source.rb</span>*
 
@@ -283,7 +283,7 @@ while true do
 end
 ```
 
-像往常一样，Knative 在作为 ContainerSource 事件源运行时将处理 --sink 标志位。我们还提供了一个额外的标记 --interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为 Docker 镜像并上传到 Dockerhub 上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的我们的事件源的 yaml，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
+像前面一样，Knative 在作为 ContainerSource 事件源运行时将处理 --sink 标志位。我们还提供了一个额外的标记 --interval，我们将定义这个标记，因为我们编写的代码将允许用户定义自己的轮询间隔。脚本被打包为 Docker 镜像并上传到 Dockerhub 上的 [gswk/usgs-event-source](https://hub.docker.com/r/gswk/usgs-event-source) 下。剩下的就是创建 [示例 7-5](#example-7-5) 中所示的事件源的 yaml，并创建订阅，以便将事件从通道发送到 [示例 7-6](#example-7-6) 中所示的服务。
 
 *<span id="example-7-5">示例 7-5. earthquake-demo/usgs-event-source.yaml</span>*
 
@@ -376,9 +376,9 @@ value: "http://geocoder.default.svc.cluster.local"
 
 ## 度量及日志纪录
 
-任何在生产环境中运行过代码的人都知道我们的故事还没有结束。仅仅因为编写了代码和部署了应用程序，就需要对管理和运维负责。正确地了解代码如何处理日志及度量是该运维流程的一部分，幸运的是 Knative 附带了许多工具来提供这些信息。更好的是，它的大部分功能已经自动绑定到您的代码中，而不需要您做任何特殊的事情。
+任何在生产环境中运行过代码的人都知道我们的故事还没有结束。因为编写了代码和部署了应用程序，我们就需要对管理和运维负责。正确地了解代码如何处理日志及度量是该运维流程的一部分，幸运的是 Knative 附带了许多工具来提供这些信息。更好的是，它的大部分功能已经自动绑定到您的代码中，而不需要您做任何特殊的事情。
 
-让我们从深入研究 Geocoder 服务的日志开始，这个功能由 Kibana 提供，Kibana 是在我们设置 Knative 的服务组件时安装的。在我们访问任何东西之前，我们需要在我们的 Kubernetes 集群中设置一个代理，只需一个命令就可以轻松完成:
+让我们从深入研究 Geocoder 服务的日志开始，这个功能由 Kibana 提供，Kibana 是我们设置 Knative 的服务组件时安装的。在我们访问任何东西之前，我们需要在我们的 Kubernetes 集群中设置一个代理，只需一个命令就可以轻松完成:
 
 `$ kubectl proxy`
 
@@ -391,7 +391,7 @@ value: "http://geocoder.default.svc.cluster.local"
 <span id="pic-7-3">![Geocoder](images/006tKfTcly1g1o90g3npwj30w70ddmzd.jpg)</span>
 *图 7-3 展示我们的Geocoder服务日志的Kibana仪表板*
 
-那么，如果只想看粗略的度量标准呢?看看某些指标比如失败的请求和响应时间可以提供解决我们应用程序问题的线索，Knative 还通过与 Grafana 一起提供非常多的度量指标（从响应代码的分布到我们的服务使用了多少 CPU）来帮助我们解决这个问题。Knative 甚至包括一个仪表盘，用于可视化当前集群的使用情况，以帮助进行容量规划。在加载 Grafana 之前，我们需要使用以下命令将端口转发到 Kubernetes 集群:
+那么，如果只想看粗略的度量标准呢？看看某些指标比如失败的请求和响应时间可以提供我们解决应用程序问题的线索，Knative 还通过与 Grafana 一起提供非常多的度量指标（从响应代码的分布到我们的服务使用了多少 CPU）来帮助我们解决这个问题。Knative 甚至包括一个仪表盘，用于可视化当前集群的使用情况，以帮助进行容量规划。在加载 Grafana 之前，我们需要使用以下命令将端口转发到 Kubernetes 集群:
 
 ```bash
 $ kubectl port-forward
@@ -416,4 +416,4 @@ $ kubectl port-forward
 
 ## 结论
 
-成功了！一个完整的应用程序，带有我们自己定制的事件源。这在很大程度上总结了我们在本书中要学习的内容，但是 Knative 还可以提供更多。同时，Knative 也在不断地发展和完善。当你继续你的旅程时，还有很多资源值得关注，所以在我们结束之前，我们需要知道我们在[第8章](./what-is-next.md)中还提供其他一些参考资料。
+一个完整的带有我们自己定制的事件源的应用程序成功了！这在很大程度上总结了我们在本书中要学习的内容，但是 Knative 还可以提供更多。同时，Knative 也在不断地发展和完善。当您继续您的学习旅程时，还有很多资源值得关注，所以在我们结束之前，我们需要知道我们在[第8章](./what-is-next.md)中还提供其他一些参考资料。
