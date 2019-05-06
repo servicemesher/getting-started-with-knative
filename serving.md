@@ -3,7 +3,7 @@ owner: ["junahan"]
 reviewer: ["haiker2011", "SataQiu", "rootsongjc", "icyxp"]
 description: "本章介绍 Knative Serving 组件，描述 Knative Serving 如何部署并为应用和函数 (funtions) 提供服务。"
 publishDate: 2019-03-03
-updateDate: 2019-03-12
+updateDate: 2019-05-05
 ---
 
 # Serving（服务）
@@ -51,7 +51,7 @@ $ kubectl apply -f configuration.yaml
 
 **自定义端口**
 
-默认情况下，Knative 将假定您的应用程序监听 8080 端口。但是，如果不是这样的话，您可以通过 `containerPort` 参数自定义一个端口：
+默认情况下，Knative 将假定您的应用程序监听 8080 端口。您可以通过 `containerPort` 参数自定义一个端口：
 
 ```yaml
     spec:
@@ -112,9 +112,9 @@ status:
   observedGeneration: 1
 ```
 
-注意[示例 2-2](#example-2-2) 中 `status` 小节，Configuration 控制器保持对最近创建和就绪 Revison 的追踪。它也包含了 Revision 的适用条件，表明它是否就绪以接收流量。
+注意[示例 2-2](#example-2-2) 中 `status` 小节，Configuration 控制器保持对最近创建和就绪 Revision 的追踪。它也包含了 Revision 的适用条件，表明它是否就绪以接收流量。
 
-> **NOTE**
+> **提醒**
 >
 > Configuration 可以指定一个已有的容器镜像，如[示例 2-1](#example-2-1) 中所示。或者，它也可以选择指向一个 Build 资源以从源代码创建一个容器镜像。[第三章：Build](./build.md) 将介绍 Knative Build 组件的详情并提供一些示例。
 >
@@ -196,7 +196,7 @@ curl -H "Host: v1.knative-routing-demo.default.example.com"
 http://$KNATIVE_INGRESS
 ```
 
-> **NOTE**
+> **提醒**
 >
 > Knative 默认使用 `example.com` 域名，但不适合生产使用。您会注意到在 `curl` 命令 (v1.knative-routing-demo.default.example.com) 中作为一个主机头传递的 URL 包含该默认值作为域名后缀。URL 格式遵循模式 `{REVISION_NAME}.{SERVICE_NAME}.{NAMESPACE}.{DOMAIN}` 。
 >
@@ -249,11 +249,11 @@ ceil(1.75) = 2 pods
 
 Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接受请求。当一个 Revision 停止接受请求时，Autoscaler 将其置为 Reserve (待命) 状态，条件是每 Pod 平均并发必须持续 30 秒保持为 0 (这是默认设置，但可以配置)。
 
-处于 Reserve 状态下，一个 Revision 底层部署缩容至零并且所有到它的流量均路由至 Activator。Activator 是一个共享组件，其捕获所有到待命 Revisios 的流量。当它收到一个到某一待命 Revision 的请求后，它转变 Revision 状态至 Active。然后代理请求至合适的 Pods。
+处于 Reserve 状态下，一个 Revision 底层部署缩容至零并且所有到它的流量均路由至 Activator。Activator 是一个共享组件，其捕获所有到待命 Revision 的流量。当它收到一个到某一待命 Revision 的请求后，它转变 Revision 状态至 Active。然后代理请求至合适的 Pods。
 
 > **Autoscaler 如何伸缩**
 >
-> Autoscaler 采用的伸缩算法针对两个独立的时间间隔计算所有数据点的平均值。它维护两个时间窗，分别是 60 秒和 6 秒。Autoscaler 使用这些数据以两种模式运作：Stable Mode (稳定模式) 和 Panic Mode (忙乱模式)。在 Stable 模式下，它使用 60 秒时间窗平均值决定如何伸缩部署以满足期望的并发量。
+> Autoscaler 采用的伸缩算法针对两个独立的时间间隔计算所有数据点的平均值。它维护两个时间窗，分别是 60 秒和 6 秒。Autoscaler 使用这些数据以两种模式运作：Stable Mode (稳定模式) 和 Panic Mode (忙碌模式)。在 Stable 模式下，它使用 60 秒时间窗平均值决定如何伸缩部署以满足期望的并发量。
 >
 > 如果 6 秒窗口的平均并发量两次到达期望目标，Autoscaler 转换为 Panic Mode 并使用 6 秒时间窗。这让它更加快捷的响应瞬间流量的增长。它也仅仅在 Panic Mode 期间扩容以防止 Pod 数量快速波动。如果超过 60 秒没有扩容发生，Autoscaler 会转换回 Stable Mode。
 >
@@ -266,15 +266,15 @@ Autoscaler 也负责缩容至零。Revision 处于 Active (激活) 状态才接�
 </div>
 
 
-> **WARN**
+> **警告**
 >
 > Autoscaler 和 Activator 均是 Knative 中快速演化的部分。参阅[最新 Knative 文档](https://github.com/knative/docs)获取最近改进。
 >
 
 ## 服务
-在 Knative 中，Service 管理负责的整个生命周期。包括部署、路由和回滚。（不要将 Knative Service 和 Kubernetes [Service](https://kubernetes.io/docs/concepts/services-networking/service/) 混淆。它们是不同的资源。） Knative Service 控制一系列组成软件的 Route 和 Configuration。Knative Service 可以被看作是一段代码 —— 您正在部署的应用或者函数。
+在 Knative 中，Service 管理工作负载的整个生命周期。包括部署、路由和回滚。（不要将 Knative Service 和 Kubernetes [Service](https://kubernetes.io/docs/concepts/services-networking/service/) 混淆。它们是不同的资源。） Knative Service 控制一系列组成软件的 Route 和 Configuration。Knative Service 可以被看作是一段代码 —— 您正在部署的应用或者函数。
 
-一个 Service 注意确保一个应用有一个 Route、一个 Configuation，以及为每次 Service 更新产生的一个新 Revision。当创建一个 Service 时，您没有特别定义一个 Route，Knative 创建一个发送流量到最新 Revision 的路由。您可以选择一个特定的 Revision 以路由流量到该 Revision。
+一个 Service 小心确保一个应用有一个 Route、一个 Configuation，以及为每次 Service 更新产生的一个新 Revision。当创建一个 Service 时，您没有特别定义一个 Route，Knative 创建一个发送流量到最新 Revision 的路由。您可以选择一个特定的 Revision 以路由流量到该 Revision。
 
 不要求您明确创建一个 Service。Route 和 Configuration 可以被分开在不同的 YAML 文件（如[示例 2-1](#example-2-1) 和 [示例 2-4](#example-2-4)）。在这种情形下，您可以应用每个单独的对象到集群。然而，推荐的方式使用一个 Service 来编排 Route 和 Configuration。[示例 2-8](#example-2-8) 所示文件用于替换来自[示例 2-1](#example-2-1) 和[示例 2-4](#example-2-4) 定义的 `configuation.yml` 和 `route.yml`。
 
@@ -295,7 +295,7 @@ spec:
             image: docker.io/gswk/knative-helloworld:latest
 ```
 
-注意这个 `service.yml` 文件和 `configuration.yml` 非常相似。这个文件定义 Configuration 并且是最小化 Service 定义。由于这里没有 Route 定义，一个默认 Route 指向最新 Revision。Service 控制器整体追踪它所有的 configuration 和 Route 的状态。然后反映这些状态在它的 `ConfigurationsReady` 和 `RoutesReady` conditions 属性里。当通过 CLI 使用 `kubectl get ksvc` 命令请求 Knative Service 信息的时候，这些状态可以被看到。
+注意这个 `service.yml` 文件和 `configuration.yml` 非常相似。这个文件定义 Configuration 并且是最小化 Service 定义。由于这里没有 Route 定义，一个默认 Route 指向最新 Revision。Service 控制器整体追踪它所有的 configuration 和 Route 的状态。然后反映这些状态在它的 `ConfigurationsReady` 和 `RoutesReady` conditions (工作状况) 属性里。当通过 CLI 使用 `kubectl get ksvc` 命令请求 Knative Service 信息的时候，这些状态可以被看到。
 
 <span id="example-2-9">*示例 2-9. `kubectl get ksvc knative-helloworld -oyaml` 命令输出片段* </span>
 
