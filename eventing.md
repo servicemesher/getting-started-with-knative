@@ -3,7 +3,7 @@ owner: ["dishuihengxin"]
 reviewer: ["haiker2011","SataQiu","dreadbird","wikiios","rootsongjc"]
 description: "这是本书第4章的内容，主要介绍事件的源、通道和订阅三大概念。"
 publishDate: 2019-03-05
-updateDate: 2019-05-05
+updateDate: 2019-05-07
 ---
 
 # Eventing（事件）
