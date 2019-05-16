@@ -144,7 +144,7 @@ istio-ingressgateway LoadBalancer 10.23.247.74 35.203.155.229
 ```bash
 $ export KNATIVE_INGRESS=$(kubectl get svc istio-ingressgateway --namespace istio-system --output 'jsonpath={.status.loadBalancer.ingress[0].ip}')
 
-$ echo $KNATIVE_INGRESS
+$ echo $KNATIVE_IN
 35.203.155.229
 ```
 
