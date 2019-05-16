@@ -161,7 +161,7 @@ curl -H "Host: my-knative-service-name.default.example.com" http://$KNATIVE_INGR
 ```bash
 $ export KNATIVE_INGRESS=$(kubectl get node  --output 'jsonpath={.items[0].status.addresses[0].address}'):$(kubectl get svc istio-ingressgateway>  --namespace istio-system --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
 
-$ echo $KNATIVE_IN
+$ echo $KNATIVE_INGRESS
 10.10.0.10:32380
 ```
 
