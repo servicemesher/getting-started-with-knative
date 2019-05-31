@@ -56,7 +56,7 @@ ServiceMesher社区，关注内容涵盖Kubernetes、Service Mesh、Istio、Serv
 
 ## 反馈与参与本书
 
-关于本书有任何问题可以[提交 Issue](https://github.com/servicemesher/getting-started-with-knative/issues/new) 反馈，参与本书翻译请参阅[规范](CODE_OF_CONDUCT.md)。
+关于本书有任何问题可以[提交 Issue](https://github.com/servicemesher/getting-started-with-knative/issues/new) 反馈，参与本书翻译请参阅[规范](https://github.com/chengwhynot/getting-started-with-knative/blob/master/CODE_OF_CONDUCT.md)。
 
 ## 版权
 
