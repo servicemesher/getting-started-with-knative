@@ -237,7 +237,7 @@ Containers:
 
 `queue-proxy` 检测该 Revision 上观察到的并发量，然后它每隔一秒将此数据发送到 Autoscaler。Autoscaler 每两秒对这些指标进行评估。基于评估的结果，它增加或者减少 Revision 部署的规模。
 
-默认情况下，Autoscaler 尝试维持每 Pod 每秒平均 100 个并发请求。这些并发目标和平均并发窗口均可以变化。Autoscaler 也能够被配置为利用 Kubernets HPA (Horizontal Pod Autoscaler) 来替代该默认配置。这将基于 CPU 使用率来自动伸缩但不支持缩容至零。这些设定都能够通过 Revision 元数据注解 (annotations) 定制。有关这些注解的详情，请参阅 [Knative 文档](https://github.com/knative/docs/blob/master/serving/samples/autoscale-go/README.md)。
+默认情况下，Autoscaler 尝试维持每 Pod 每秒平均 100 个并发请求。这些并发目标和平均并发窗口均可以变化。Autoscaler 也能够被配置为利用 Kubernets HPA (Horizontal Pod Autoscaler) 来替代该默认配置。这将基于 CPU 使用率来自动伸缩但不支持缩容至零。这些设定都能够通过 Revision 元数据注解 (annotations) 定制。有关这些注解的详情，请参阅 [Knative 文档](https://github.com/knative/docs/blob/master/docs/serving/samples/autoscale-go/README.md)。
 
 例如，一个 Revision 每秒收到 350 个请求并且每次请求大约需要处理 0.5 秒。使用默认设置 (每 Pod 100 个并发请求)，这个 Revision 将扩展至两个 Pod：
 
