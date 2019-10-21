@@ -375,7 +375,7 @@ end
 
 #### 例6-14 `time-event-source/Dockerfile`{#example-6-14}
 
-```Docker
+```docker
 FROM ruby:2.5.3-alpine3.8
 ADD . /time-event-source
 WORKDIR /time-event-source
