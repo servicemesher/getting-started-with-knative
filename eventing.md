@@ -91,7 +91,7 @@ $ curl $SERVICE_IP -H "Host: knative-eventing-demo.default.example.com" -XPOST -
 > hello, Eventing
 ```
 
-接下来，我们可以设置一个 Kubernetes 事件源。在配置和身份认证方面，不同的事件源则有不同的要求。例如，GCP PubSub 源则要求向谷歌云平台进行身份请求验证，对于 Kubernetes 事件源，则需要创建一个可以读取到 Kubernetes 集群内发生的事件的服务帐户。与[第三章](build.md)中做法一样，我们在 YAML 中定义了这个服务帐户并将其应用到我们的集群,如例 4-3 所示。
+接下来，我们可以设置一个 Kubernetes 事件源。在配置和身份认证方面，不同的事件源则有不同的要求。例如，GCP PubSub 源则要求向谷歌云平台进行身份请求验证，对于 Kubernetes 事件源，则需要创建一个可以读取到 Kubernetes 集群内发生的事件的 ServiceAccount。与[第三章](build.md)中做法一样，我们在 YAML 中定义了这个服务帐户并将其应用到我们的集群，如例 4-3 所示。
 
 例4-3: `knative-eventing-demo/serviceaccount.yaml`
 ```yaml
@@ -135,7 +135,7 @@ subjects:
 $ kubectl apply -f knative-eventing-demo/serviceaccount.yaml
 ```
 
-当 *events-sa* 服务帐户创建好后，剩下就是定义事件的实际来源，在我们的演示案例中它就是一个 Kubernetes 事件源实例。该实例将以一个特定的配置运行，在该演示案例中则是一个预定义的服务帐户，具体配置如例 4-4 所示。
+当 *events-sa* ServiceAccount 创建好后，剩下就是定义事件的实际来源，在我们的演示案例中它就是一个 Kubernetes 事件源实例。该实例将以一个特定的配置运行，在该演示案例中则是一个预定义的 ServiceAccount，具体配置如例 4-4 所示。
 
 例4-4: ` knative-eventing-demo/source.yaml`
 
@@ -153,7 +153,7 @@ spec:
     name: knative-eventing-demo-channel
 ```
 
-其中大部分都相当简单，我们将创建的对象类型定义为 *KubernetesEventSource*，简称为 *k8sevents*，并传递一些特定实例的配置，例如我们应该运行的命名空间和使用的服务帐户。你可能已经注意到了一个新的东西，即接收器配置。
+其中大部分都相当简单，我们将创建的对象类型定义为 *KubernetesEventSource*，简称为 *k8sevents*，并传递一些特定实例的配置，例如我们应该运行的 Namespace 和使用的 ServiceAccount。你可能已经注意到了一个新的东西，即接收器（sink）配置。
 
 接收器是定义我们想把事件发送到的目的地和 Kubernetes 的对象参考的一种方法。或者更简单地说，就是一种在 Kubernetes 中寻址到另一个预定义对象的方法。在 Knative 中和事件源做对接的通常会是一个服务（如果我们想要将事件直接发送到在 Knative 上运行的应用程序），或者是一个尚未引入的组件——通道。
 
@@ -181,7 +181,7 @@ spec:
 $ kubectl apply -f knative-eventing-demo/channel.yaml
 ```
 
-在这里，我们创建了一个 *knative-eventing-demo-channel* 的通道，并定义我们想要创建的通道类型，在该演示案例中则是一个 *in-memory-channel* (内存通道)。正如前面所述，Knative 事件的一个重要目标是它完全从底层基础架构中抽象出来，这意味着支持可插入通道的消息服务。这是通过 *ClusterChannelProvisioner* (集群通道提供者)一种用于定义 Knative 应如何与我们的消息传递服务进行通信的模式来实现的。我们的演示案列使用了内存通道配置程序，但 Knative 实际上也提供了一些选项来支持我们的通道服务：
+在这里，我们创建了一个 *knative-eventing-demo-channel* 的通道，并定义我们想要创建的通道类型，在该演示案例中则是一个 *in-memory-channel*（内存通道）。正如前面所述，Knative 事件的一个重要目标是它完全从底层基础架构中抽象出来，这意味着支持可插入通道的消息服务。这是通过 *ClusterChannelProvisioner*（集群通道提供者）一种用于定义 Knative 应如何与消息传递服务进行通信的模式来实现的。演示案列使用了内存通道配置程序，但 Knative 实际上也提供了一些选项来支持通道服务：
 
 - in-memory-channel
   
@@ -210,7 +210,7 @@ $ kubectl apply -f knative-eventing-demo/channel.yaml
 
 图4-1. 事件源可以将事件发送到通道，以便多个服务可以同时接收它们，或者它们可以直接发送到一个服务
 
-Knative 中的服务不了解或不关心事件和请求是如何获取的。它可以是来自入口网关的 HTTP 请求，也可以是从通道发送来的事件。无论何种方式，我们的服务仅接收 HTTP 请求。这是 Knative 中一个重要的解耦方式，它确保我们将代码编写到我们的架构中，而不是在于底层。让我们创建订阅，它将从我们的通道向我们的服务发送事件。正如示例 4-6 所示，该定义仅使用了两个引用，一个引用 Channel（通道），另一个引用 Service（服务）。
+Knative 中的服务不了解或不关心事件和请求是如何获取的。它可以是来自入口网关的 HTTP 请求，也可以是从通道发送来的事件。无论何种方式，服务仅接收 HTTP 请求。这是 Knative 中一个重要的解耦方式，它确保我们将代码编写到架构中，而不是在底层。我们创建订阅，通道向服务发送事件。正如示例 4-6 所示，该定义仅使用了两个引用，一个引用 Channel（通道），另一个引用 Service（服务）。
 
 例4-6: ` knative-eventing-demo/subscription.yaml`
 
@@ -245,4 +245,4 @@ $ kubectl logs knative-eventing-demo-00001-deployment-f4c794667-mcrcv -c user-co
 
 ## 总结
 
-这些构建块为帮助实现丰富和健全的事件驱动架构铺平了道路，但这仅仅是个开始。我们将在“[构建自定义事件源](using-knative.md)”章节中使用容器源创建自定义源，还将在[第7章](putting-it-all-together.md)中展示事件。
+这些构建块为帮助实现丰富和健全的事件驱动架构铺平了道路，但这仅仅是个开始。我们将在“[构建自定义事件源](using-knative.md)”章节中使用容器源创建自定义源，还将在[第 7 章](putting-it-all-together.md)中展示事件。

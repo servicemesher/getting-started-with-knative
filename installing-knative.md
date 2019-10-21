@@ -8,11 +8,11 @@ updateDate: 2019-03-27
 
 # Knative 安装
 
-在开始使用 Knative 构建和托管工作负载前，你需要安装它。你还应该运行一些命令来验证它是否正常运行并按预期工作。本章将介绍从 Mac 或 Linux shell 安装和验证 Knative 的必要步骤。
+在开始使用 Knative 构建和托管工作负载前，您需要安装它。您还应该运行一些命令来验证它是否正常运行并按预期工作。本章将介绍从 Mac 或 Linux shell 安装和验证 Knative 的必要步骤。
 
 ## 建立一个 Knative 集群
 
-首先，你需要已经有一个 Kubernetes 集群。 Knative 要求 Kubernetes 的版本在1.11以上。你必须在集群上启用 [MutatingAdmissionWebhook admission controller](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-controller)。为了简单，你可以在本地机器上使用 [Minikube](https://kubernetes.io/docs/setup/minikube/) 或者在云上运行集群。
+首先，您需要已经有一个 Kubernetes 集群。 Knative 要求 Kubernetes 的版本在1.11以上。您必须在集群上启用 [MutatingAdmissionWebhook admission controller](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-controller)。为了简单，您可以在本地机器上使用 [Minikube](https://kubernetes.io/docs/setup/minikube/) 或者在云上运行集群。
 
 > ### 为什么我们需要安装 Istio
 
@@ -22,7 +22,7 @@ Istio 是一个服务网络。它在 Kubernetes 之上提供了很多特性，�
 
 ---
 
-本报告的目的不是详细说明 Istio 的内部工作。在这一章中，我们将介绍 Istio 与 Knative 一起使用时要用到的关于 Istio 的所有知识。如果你想了解更多，可以从 [What is Istio?](https://istio.io/docs/concepts/what-is-istio/) 以及 [Istio documentation](https://istio.io/docs/) 开始。
+本报告的目的不是详细说明 Istio 的内部工作。在这一章中，我们将介绍 Istio 与 Knative 一起使用时要用到的关于 Istio 的所有知识。如果您想了解更多，可以从 [What is Istio?](https://istio.io/docs/concepts/what-is-istio/) 以及 [Istio documentation](https://istio.io/docs/) 开始。
 
 > ### 须知
 
@@ -40,7 +40,7 @@ kubectl apply --filename https://storage.googleapis.com/knative-releases/serving
 kubectl label namespace default istio-injection=enabled
 ```
 
-第一个命令将所有必需的 Istio 对象导入集群。第二个命令在 default 命名空间中启用 Istio 自动注入。这可以确保 Istio 在 default 命名空间中为每个 Pod 创建时自动注入边车（sidecar）。（你会注意到所有 Pod 至少都有两个容器。一个是用户的容器；一个是 istio-proxy。) Knative 依赖于 Istio 组件。使用以下命令验证 Istio 安装，直到所有 Pod 显示为运行或完成：
+第一个命令将所有必需的 Istio 对象导入集群。第二个命令在 default 命名空间中启用 Istio 自动注入。这可以确保 Istio 在 default 命名空间中为每个 Pod 创建时自动注入边车（sidecar）。（您会注意到所有 Pod 至少都有两个容器。一个是用户的容器；一个是 istio-proxy。) Knative 依赖于 Istio 组件。使用以下命令验证 Istio 安装，直到所有 Pod 显示为运行或完成：
 
 ```bash
 kubectl get pods -n istio-system --watch
@@ -70,7 +70,7 @@ kubectl get pods --namespace knative-build --watch
 kubectl apply --filename https://storage.googleapis.com/knative-releases/serving/latest/release-no-mon.yaml
 ```
 
-这避免了在 monitoring 命名空间中安装任何组件。想要获取更多信息，请看 *第7章指标和日志*。
+这避免了在 monitoring 命名空间中安装任何组件。想要获取更多信息，请看 *第 7 章指标和日志*。
 
 ---
 
@@ -82,7 +82,7 @@ kubectl apply --filename https://storage.googleapis.com/knative-releases/eventin
 kubectl get pods --namespace knative-eventing --watch
 ```
 
-最后，你可以选择安装你需要的 Build 模板。这一步与第三章中的步骤完全相同。下面是安装 Kaniko 和 Buildpacks 模板的命令：
+最后，您可以选择安装您需要的 Build 模板。这一步与第三章中的步骤完全相同。下面是安装 Kaniko 和 Buildpacks 模板的命令：
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/knative/build-templates/master/kaniko/kaniko.yaml
@@ -92,7 +92,7 @@ kubectl apply -f https://raw.githubusercontent.com/knative/build-templates/maste
 
 > ### 须知
 
-如果你计划使用 Build 模块将源代码打包到镜像中，你需要一个容器仓库来推送。在安装 Knative 的同时，考虑设置对所选容器仓库的访问。容器仓库你可以选择 Docker Hub 或谷歌容器仓库这样的公共托管方式，或者你也可以设置自己的私有仓库。有关访问和将镜像推送到仓库的更多信息，请参阅第4章中的 Build 组件。
+如果您计划使用 Build 模块将源代码打包到镜像中，您需要一个容器仓库来推送。在安装 Knative 的同时，考虑设置对所选容器仓库的访问。容器仓库您可以选择 Docker Hub 或谷歌容器仓库这样的公共托管方式，或者您也可以设置自己的私有仓库。有关访问和将镜像推送到仓库的更多信息，请参阅第4章中的 Build 组件。
 
 ---
 
@@ -131,7 +131,7 @@ riff system install
 
 ## 访问 Knative 集群
 
-设置好 Knative 集群之后，就可以将应用程序部署到 Knative 上了。但你需要知道如何使用它们。它们如何暴露在集群中？ Knative 在 istio-system 命名空间中使用 LoadBalancer 方式。使用以下命令获取外部 IP 地址，列名： EXTERNAL-IP
+设置好 Knative 集群之后，就可以将应用程序部署到 Knative 上了。但您需要知道如何使用它们。它们如何暴露在集群中？ Knative 在 istio-system 命名空间中使用 LoadBalancer 方式。使用以下命令获取外部 IP 地址，列名： EXTERNAL-IP
 
 ```bash
 $ kubectl get svc istio-ingressgateway --namespace istio-system
@@ -139,7 +139,7 @@ NAME                 TYPE         CLUSTER-IP   EXTERNAL-IP
 istio-ingressgateway LoadBalancer 10.23.247.74 35.203.155.229
 ```
 
-正如您将在第6章中看到的，这个 IP 地址加上正确的 HTTP HOST 头就可以向集群上的应用程序发起请求。为了方便使用，可以把外部 IP 地址设置为 KNATIVE_INGRESS 这个环境变量：
+正如您将在第 6 章中看到的，这个 IP 地址加上正确的 HTTP HOST 头就可以向集群上的应用程序发起请求。为了方便使用，可以把外部 IP 地址设置为 KNATIVE_INGRESS 这个环境变量：
 
 ```bash
 $ export KNATIVE_INGRESS=$(kubectl get svc istio-ingressgateway --namespace istio-system --output 'jsonpath={.status.loadBalancer.ingress[0].ip}')
@@ -148,7 +148,7 @@ $ echo $KNATIVE_INGRESS
 35.203.155.229
 ```
 
-现在，使用与我们在第2章中看到的类似的 curl 命令，我们可以使用这个环境变量向 Knative 环境中的服务发出请求：
+现在，使用与我们在第 2 章中看到的类似的 curl 命令，我们可以使用这个环境变量向 Knative 环境中的服务发出请求：
 
 ```bash
 curl -H "Host: my-knative-service-name.default.example.com" http://$KNATIVE_INGRESS
@@ -156,7 +156,7 @@ curl -H "Host: my-knative-service-name.default.example.com" http://$KNATIVE_INGR
 
 > ### 不支持 Load Balancer？
 
-如果你的 Kubernetes 实例不支持 load balancer（比如： Minikube），命令会略有不同因为 EXTERNAL-IP 会显示为 <pending>。使用以下命令返回节点的 IP 和端口：
+如果您的 Kubernetes 实例不支持 load balancer（比如： Minikube），命令会略有不同因为 EXTERNAL-IP 会显示为 <pending>。使用以下命令返回节点的 IP 和端口：
 
 ```bash
 $ export KNATIVE_INGRESS=$(kubectl get node  --output 'jsonpath={.items[0].status.addresses[0].address}'):$(kubectl get svc istio-ingressgateway>  --namespace istio-system --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
@@ -169,4 +169,4 @@ $ echo $KNATIVE_INGRESS
 
 ## 结论
 
-现在已经设置好了一切，可以将应用程序部署到 Knative 了。在第6章，您将看到一些不同的示例。您还将了解通过设置静态 IP、自定义域名以及 DNS 配置来公开集群的更健壮的方式。
+现在已经设置好了一切，可以将应用程序部署到 Knative 了。在第 6 章，您将看到一些不同的示例。您还将了解通过设置静态 IP、自定义域名以及 DNS 配置来公开集群的更健壮的方式。

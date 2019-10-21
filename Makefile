@@ -1,4 +1,4 @@
-BOOK_NAME := getting-started-with-knaitve-zh
+BOOK_NAME := getting-started-with-knative-zh
 BOOK_OUTPUT := _book
 
 .PHONY: install build all

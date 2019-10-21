@@ -6,7 +6,7 @@
   "author": "ServiceMesher",
   "links": {
    "sidebar": {
-   "ServiceMesher主页": "http://www.servicemesher.com"
+   "ServiceMesher主页": "https://www.servicemesher.com"
     }
   },
   "plugins": [
@@ -25,7 +25,8 @@
     "tbfed-pagefooter@^0.0.1",
     "3-ba",
     "sitemap-general",
-    "ga"
+    "ga",
+    "copy-code-button"
   ],
   "pluginsConfig": {
     "github": {
@@ -56,12 +57,12 @@
         "token": "154337f0d95f0b110f98c1d5d7038895"
      },
     "tbfed-pagefooter": {
-    "copyright": "Copyright © <a href=http://www.servicemesher.com>servicemesher.com</a> 2017-2019",
+    "copyright": "Copyright © <a href=https://www.servicemesher.com>servicemesher.com</a> 2017-2019",
     "modify_label": " 最后更新于 ",
     "modify_format": "YYYY-MM-DD HH:mm:ss"
     },
     "sitemap-general": {
-        "prefix": "http://www.servicemesher.com/getting-started-with-knative/"
+        "prefix": "https://www.servicemesher.com/getting-started-with-knative/"
     },
     "ga": {
         "token": "UA-93485976-2"

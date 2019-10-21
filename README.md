@@ -1,6 +1,6 @@
 # Knative入门——构建基于 Kubernetes 的现代化Serverless应用
 
-**本书是 Getting Started with Knative - Building Modern Serverless Workloads on Kubernetes 的中文版，由 [ServiceMesher 社区](http://www.servicemesher.com)翻译。**
+**本书是 Getting Started with Knative - Building Modern Serverless Workloads on Kubernetes 的中文版，由 [ServiceMesher 社区](https://www.servicemesher.com)翻译。**
 
 <img src="cover.jpg" width="50%" height="50%">
 
@@ -8,9 +8,8 @@
 
 *Getting Started with Knative* 是一本由 Pivotal 公司赞助 O’Reilly 出品的免费电子书，英文版下载地址：<https://content.pivotal.io/ebooks/getting-started-with-knative>。
 
-在线阅读：<http://www.servicemesher.com/getting-started-with-knative/>
-
-Github：<https://github.com/servicemesher/getting-started-with-knative/>
+- 在线阅读：<https://www.servicemesher.com/getting-started-with-knative/>
+- Github：<https://github.com/servicemesher/getting-started-with-knative/>
 
 ## 关于 Knative
 
@@ -60,6 +59,6 @@ ServiceMesher社区，关注内容涵盖Kubernetes、Service Mesh、Istio、Serv
 
 ## 版权
 
-**本书经 Pivotal 公司授权 [ServiceMesher 社区](http://www.servicemesher.com)翻译，请勿擅自印刷出版，引用本书中文版中的内容请注明出处。**
+**本书经 Pivotal 公司授权 [ServiceMesher 社区](https://www.servicemesher.com)翻译，请勿擅自印刷出版，引用本书中文版中的内容请注明出处。**
 
-![ServiceMesher](images/006tKfTcly1g0cz6429t2j31jt0beq9s.jpg)
+![ServiceMesher](images/servicemesher-wechat.png)
