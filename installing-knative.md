@@ -159,7 +159,7 @@ curl -H "Host: my-knative-service-name.default.example.com" http://$KNATIVE_INGR
 如果您的 Kubernetes 实例不支持 load balancer（比如： Minikube），命令会略有不同因为 EXTERNAL-IP 会显示为 <pending>。使用以下命令返回节点的 IP 和端口：
 
 ```bash
-$ export KNATIVE_INGRESS=$(kubectl get node  --output 'jsonpath={.items[0].status.addresses[0].address}'):$(kubectl get svc istio-ingressgateway>  --namespace istio-system --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
+$ export KNATIVE_INGRESS=$(kubectl get node  --output 'jsonpath={.items[0].status.addresses[0].address}'):$(kubectl get svc istio-ingressgateway  --namespace=istio-system --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
 
 $ echo $KNATIVE_INGRESS
 10.10.0.10:32380
