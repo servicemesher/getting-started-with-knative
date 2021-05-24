@@ -28,19 +28,20 @@ Knative Serving 始于 Configuration。您可以在 Configuration 中为部署�
 <span id="example-2-1">*例 2-1. knative-helloworld/configuration.yml* </span>
 
 ```yaml
-apiVersion: serving.knative.dev/v1alpha1
+apiVersion: serving.knative.dev/v1
 kind: Configuration
 metadata:
   name: knative-helloworld
   namespace: default
 spec:
-  revisionTemplate:
+  template:
     spec:
-      container:
-        image: docker.io/gswk/knative-helloworld:latest
+      containers:
+      - image: docker.io/gswk/knative-helloworld:latest
         env:
           - name: MESSAGE
             value: "Knative!"
+
 ```
 
 现在，您可以用一个简单的命令启用该 YAML 文件：
@@ -55,9 +56,9 @@ $ kubectl apply -f configuration.yaml
 
 ```yaml
     spec:
-      revisionTemplate:
+      template:
         spec:
-          container:
+          containers:
             image: docker.io/gswk/knative-helloworld:latest
             env:
               - name: MESSAGE
